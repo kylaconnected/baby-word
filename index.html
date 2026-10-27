@@ -53,7 +53,7 @@ h3{font-size:1.08rem}
 .muted{color:var(--muted)}
 .small{font-size:.9rem}
 .num{font-variant-numeric:tabular-nums}
-header{display:flex;flex-direction:column;gap:2px}
+header{display:flex;flex-direction:column;gap:8px}
 .mark{display:flex;gap:3px;align-self:center;flex:none}
 .mark i{width:10px;height:10px;border-radius:52% 48% 55% 45%/50% 55% 45% 50%;display:block}
 .mark i:nth-child(1){background:var(--k-blue);transform:rotate(-8deg)}
@@ -135,6 +135,7 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .banner p{margin:0;flex:1;min-width:0}
 .banner b{font-weight:400;color:var(--btn)}
 .mini-banner{padding:6px 8px 6px 12px;font-size:.72rem;line-height:1.4;border-radius:12px}
+.mini-banner .os{display:inline-block;font-size:.68rem;color:var(--btn);background:var(--paper);border-radius:999px;padding:0 7px;margin-right:4px;line-height:1.6}
 .mini-banner .ic{width:15px;height:15px;vertical-align:-3px;fill:none;stroke:var(--btn);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .mini-banner button{font-size:.75rem;padding:2px 6px}
 .mini-banner p .go{font-size:.74rem;padding:0 2px;color:var(--btn);text-decoration:underline;text-underline-offset:3px;border:0;background:none;cursor:pointer}
@@ -699,11 +700,10 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     const ua=navigator.userAgent||""; const ios=/iPhone|iPad|iPod/.test(ua) || (ua.includes("Mac") && "ontouchend" in document);
     const mobile = ios || /Android/.test(ua);
     if(standalone || !mobile || lsGet("first-words-installHint")==="off") return;
-    $("installText").innerHTML = ios
-      ? "사파리 아래쪽 공유 버튼 <svg class=\"ic\" viewBox=\"0 0 24 24\" aria-label=\"공유\"><path d=\"M12 3v12M8 7l4-4 4 4\"/><path d=\"M6 11H5v10h14V11h-1\"/></svg> 을 누르고 <b>‘홈 화면에 추가’</b>를 선택하세요. 앱처럼 쓸 수 있고, 오래 안 열어도 기록이 자동으로 지워지지 않아요."
-      : (/SamsungBrowser/.test(ua)
-        ? "삼성 인터넷 아래쪽 메뉴(≡) → ‘현재 페이지 추가’ → <b>‘홈 화면’</b>을 선택하세요. 앱처럼 쓸 수 있고, 기록도 더 안전하게 보관돼요."
-        : "크롬 오른쪽 위 메뉴(⋮) → <b>‘홈 화면에 추가’</b>(또는 ‘앱 설치’)를 선택하세요. 앱처럼 쓸 수 있고, 기록도 더 안전하게 보관돼요.");
+    const iosLine = "<span class=\"os\">아이폰</span> 사파리 아래쪽 공유 버튼 <svg class=\"ic\" viewBox=\"0 0 24 24\" aria-label=\"공유\"><path d=\"M12 3v12M8 7l4-4 4 4\"/><path d=\"M6 11H5v10h14V11h-1\"/></svg> → <b>‘홈 화면에 추가’</b>";
+    const andLine = "<span class=\"os\">안드로이드</span> 크롬 오른쪽 위 메뉴(⋮) → <b>‘홈 화면에 추가’</b> · 삼성 인터넷은 아래쪽 메뉴(≡) → ‘현재 페이지 추가’";
+    $("installText").innerHTML = "홈 화면에 추가하면 앱처럼 쓸 수 있고, 오래 안 열어도 기록이 지워지지 않아요."
+      + "<br>" + (ios ? iosLine+"<br>"+andLine : andLine+"<br>"+iosLine);
     $("installBanner").hidden=false;
     // 안드로이드 크롬: 바로 설치 버튼
     window.addEventListener("beforeinstallprompt", e=>{
