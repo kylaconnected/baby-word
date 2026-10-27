@@ -47,7 +47,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   display:flex;flex-direction:column;gap:12px}
 h1,h2,h3{font-family:var(--hand);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.02em}
-h1{font-size:1.45rem;line-height:1.25}
+h1{font-size:1.75rem;line-height:1.2}
 h2{font-size:1.4rem;line-height:1.15}
 h3{font-size:1.08rem}
 .muted{color:var(--muted)}
@@ -62,6 +62,7 @@ header{display:flex;flex-direction:column;gap:2px}
 .mark i:nth-child(4){background:var(--k-green);transform:rotate(9deg)}
 .child{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
 .child .linkbtn{margin-left:auto;font-size:.8rem}
+header>.linkbtn{font-size:.82rem}
 .age{font-family:var(--hand);font-size:1rem;color:var(--btn)}
 button,input,select{font:inherit;color:inherit}
 .linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.9rem;align-self:flex-start}
@@ -128,12 +129,13 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .card .play{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:0;background:var(--btn-soft);color:var(--btn);display:grid;place-items:center;cursor:pointer;padding:0}
 .card .play svg{width:14px;height:14px;fill:currentColor}
 .card.has-audio .word{padding-right:34px}
-.notice{font-size:.72rem;white-space:nowrap;overflow:hidden;color:var(--muted);margin:0;padding:0 6px;display:flex;gap:6px;align-items:flex-start}
+.notice{font-size:.74rem;line-height:1.5;color:var(--muted);margin:0;padding:0 6px;display:flex;gap:6px;align-items:flex-start}
 .notice svg{width:12px;height:12px;flex:none;margin-top:2px;fill:none;stroke:currentColor;stroke-width:2}
 .banner{background:var(--btn-soft);border-radius:12px;padding:7px 10px 7px 12px;font-size:.78rem;display:flex;gap:8px;align-items:center;line-height:1.45}
 .banner p{margin:0;flex:1;min-width:0}
 .banner b{font-weight:400;color:var(--btn)}
 .mini-banner{padding:6px 8px 6px 12px;font-size:.72rem;line-height:1.4;border-radius:12px}
+.mini-banner .ic{width:15px;height:15px;vertical-align:-3px;fill:none;stroke:var(--btn);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .mini-banner button{font-size:.75rem;padding:2px 6px}
 .banner button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.78rem;padding:2px 4px;white-space:nowrap}
 .banner button.go{color:var(--btn);text-decoration:underline;text-underline-offset:3px}
@@ -186,8 +188,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
       <h1 id="childName">우리 아기 말 수첩</h1>
       <span class="age num" id="childAge"></span>
-      <button class="linkbtn" id="editChild" type="button">아기 이름·생일 설정</button>
     </div>
+    <button class="linkbtn" id="editChild" type="button">아기 이름·생일 설정</button>
   </header>
 
   <div class="tabs" role="tablist">
@@ -229,7 +231,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       </div>
     </form>
     <button type="button" class="recent" id="recent" hidden></button>
-    <p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>기록·녹음은 이 기기에만 저장돼요 · 서버 전송, 로그인 없음</span></p>
+    <p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>기록과 녹음은 이 기기에만 저장되고, 서버나 다른 곳으로 전송되지 않아요. 로그인도 필요 없어요.</span></p>
   </section>
 
   <!-- 목록 -->
@@ -697,8 +699,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     const mobile = ios || /Android/.test(ua);
     if(standalone || !mobile || lsGet("first-words-installHint")==="off") return;
     $("installText").innerHTML = ios
-      ? "공유 → <b>‘홈 화면에 추가’</b>로 앱처럼 쓰면 기록이 자동 삭제되지 않아요."
-      : "메뉴(⋮) → <b>‘홈 화면에 추가’</b>로 앱처럼 쓰면 기록이 더 안전해요.";
+      ? "사파리 아래쪽 공유 버튼 <svg class=\"ic\" viewBox=\"0 0 24 24\" aria-label=\"공유\"><path d=\"M12 3v12M8 7l4-4 4 4\"/><path d=\"M6 11H5v10h14V11h-1\"/></svg> 을 누르고 <b>‘홈 화면에 추가’</b>를 선택하세요. 앱처럼 쓸 수 있고, 오래 안 열어도 기록이 자동으로 지워지지 않아요."
+      : "브라우저 메뉴(⋮)에서 <b>‘홈 화면에 추가’</b> 또는 ‘앱 설치’를 선택하세요. 앱처럼 쓸 수 있고, 기록도 더 안전하게 보관돼요.";
     $("installBanner").hidden=false;
     $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); };
   })();
