@@ -58,7 +58,7 @@ header{display:flex;flex-direction:column;gap:2px}
 button,input,select{font:inherit;color:inherit}
 .linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.9rem;align-self:flex-start}
 
-.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--field);border-radius:999px;padding:4px;gap:4px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);background:var(--field);border-radius:999px;padding:4px;gap:4px}
 .tabs button{border:0;background:none;padding:8px;border-radius:999px;cursor:pointer;font-size:1.02rem;color:var(--muted)}
 .tabs button[aria-selected="true"]{background:var(--btn);color:var(--btn-ink)}
 
@@ -100,6 +100,9 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .filters button[aria-pressed="true"]{background:var(--paper);color:var(--btn);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .filters select{height:auto;border:0;border-radius:999px;padding:7px 22px 7px 10px;font-size:.9rem;color:var(--muted);background-color:transparent;background-position:calc(100% - 13px) 50%,calc(100% - 8px) 50%;text-overflow:ellipsis}
 .filters select.on{background-color:var(--paper);color:var(--btn);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.recent{border:0;background:none;text-align:left;padding:2px 6px;color:var(--muted);font-size:.9rem;cursor:pointer;line-height:1.5}
+.recent b{font-weight:400;color:var(--ink)}
+.recent span{color:var(--btn);white-space:nowrap}
 .listmeta{display:flex;justify-content:flex-end;font-size:.88rem;color:var(--muted);padding:6px 4px 0}
 
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:8px}
@@ -155,6 +158,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
 
   <div class="tabs" role="tablist">
     <button role="tab" id="tabLog" aria-selected="true" type="button">기록</button>
+    <button role="tab" id="tabList" aria-selected="false" type="button">목록</button>
     <button role="tab" id="tabSum" aria-selected="false" type="button">요약</button>
   </div>
 
@@ -184,7 +188,11 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       <p class="small muted" style="margin:0" id="addHint" hidden>체크가 유지되니 이미 하는 말을 연달아 입력하세요.</p>
       <button class="primary" type="submit">기록하기</button>
     </form>
+    <button type="button" class="recent" id="recent" hidden></button>
+  </section>
 
+  <!-- 목록 -->
+  <section id="viewList" hidden style="flex-direction:column;gap:0">
     <div>
       <div class="filters">
         <button type="button" data-f="all" aria-pressed="true">전체</button>
@@ -367,7 +375,16 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     renderSummary();
   }
 
+  function renderRecent(){
+    const r=$("recent");
+    if(!words.length){ r.hidden=true; return; }
+    const last=[...words].sort((a,b)=>(b.id>a.id)-(b.id<a.id)).slice(0,3).map(w=>esc(w.word));
+    r.innerHTML='최근 기록 <b>'+last.join(", ")+'</b> · <span>전체 '+words.length+'개 보기 →</span>';
+    r.hidden=false;
+  }
+
   function renderSummary(){
+    renderRecent();
     const t=today();
     const cut=new Date(t+"T00:00"); cut.setDate(cut.getDate()-30); const cutS=cut.toISOString().slice(0,10);
     const say=words.filter(w=>w.say).sort((a,b)=>a.say.localeCompare(b.say));
@@ -437,13 +454,16 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   document.querySelectorAll(".filters button").forEach(b=>b.addEventListener("click",()=>{
     filter=b.dataset.f; document.querySelectorAll(".filters button").forEach(x=>x.setAttribute("aria-pressed", x===b)); render();
   }));
+  const TABS={log:["tabLog","viewLog"],list:["tabList","viewList"],sum:["tabSum","viewSum"]};
   function tab(which){
-    const log=which==="log";
-    $("tabLog").setAttribute("aria-selected",log); $("tabSum").setAttribute("aria-selected",!log);
-    $("viewLog").hidden=!log; $("viewSum").hidden=log; if(!log) $("viewSum").style.display="flex";
+    for(const [k,[t,v]] of Object.entries(TABS)){
+      const on=k===which; $(t).setAttribute("aria-selected",on); $(v).hidden=!on; if(on) $(v).style.display="flex";
+    }
+    window.scrollTo(0,0);
   }
-  $("tabLog").onclick=()=>tab("log"); $("tabSum").onclick=()=>tab("sum");
-  if(location.hash==="#summary") tab("sum");
+  $("tabLog").onclick=()=>tab("log"); $("tabList").onclick=()=>tab("list"); $("tabSum").onclick=()=>tab("sum");
+  $("recent").onclick=()=>tab("list");
+  if(location.hash==="#summary") tab("sum"); else if(location.hash==="#list") tab("list");
 
   // ---------- edit ----------
   function openEdit(id){
