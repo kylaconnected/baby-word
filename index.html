@@ -284,7 +284,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
 <div class="sheet" id="sheet" hidden>
   <form class="panel" id="editForm" autocomplete="off">
     <h2 id="sheetTitle">단어 수정</h2>
-    <label>아기가 한 말 <input type="text" id="edPron" maxlength="40" placeholder="예: 빠방"></label>
+    <label>아기 말 (아기가 한 말 / 아기에게 쓴 말) <input type="text" id="edPron" maxlength="40" placeholder="예: 빠방, 까까"></label>
     <label>뜻 (어른 말) <input type="text" id="edWord" maxlength="40" required placeholder="예: 자동차"></label>
     <label>분류 <select id="edCat"></select></label>
     <div class="rec">
@@ -473,8 +473,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       const d = w.say ? w.say : w.und, before = w.say ? w.sayBefore : w.undBefore;
       b.innerHTML =
         (w.hasAudio? '<button type="button" class="play" aria-label="'+esc(w.word)+' 녹음 듣기"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>' : '')+
-        '<span class="word"><span>'+esc(w.say && w.pron ? w.pron : w.word)+'</span></span>'+
-        (w.say && w.pron ? '<span class="pron">뜻: '+esc(w.word)+'</span>' : (w.pron ? '<span class="pron">“'+esc(w.pron)+'”</span>' : ''))+
+        '<span class="word"><span>'+esc(w.pron || w.word)+'</span></span>'+
+        (w.pron ? '<span class="pron">뜻: '+esc(w.word)+'</span>' : '')+
         '<span class="foot">'+
           (w.say ? '<span class="st say">말함</span>' : '<span class="st und">알아들음</span>')+
           '<span class="date num">'+fmtShort(d)+(before?' 이전부터':'')+'</span>'+
@@ -542,9 +542,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   function setStatus(s){
     status=s; $("stSay").setAttribute("aria-pressed", s==="say"); $("stUnd").setAttribute("aria-pressed", s==="und");
     const say=s==="say";
-    $("inWordLabel").textContent = say ? "아기가 한 말" : "알아들은 말";
-    $("inWord").placeholder = say ? "들린 그대로 · 예: 빠방, 엄마 저" : "예: 자동차, 까까 줄까?";
-    $("meanWrap").hidden = !say; $("meanWrap").parentElement.classList.toggle("solo", !say);
+    $("inWordLabel").textContent = say ? "아기가 한 말" : "아기에게 쓴 말";
+    $("inWord").placeholder = say ? "들린 그대로 · 예: 빠방, 엄마 저" : "아기한테 한 그대로 · 예: 까까, 빠방 타자";
   }
   $("stSay").onclick=()=>setStatus("say"); $("stUnd").onclick=()=>setStatus("und");
   $("inBefore").addEventListener("change", e=>{
@@ -558,10 +557,10 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     e.preventDefault();
     if(inRec.busy){ toast("녹음을 먼저 멈춰 주세요"); return; }
     const said=$("inWord").value.trim().replace(/\s+/g," "); if(!said) return;
-    const mean=status==="say" ? $("inPron").value.trim().replace(/\s+/g," ") : "";
+    const mean=$("inPron").value.trim().replace(/\s+/g," ");
     // word = 뜻(어른 말, 목록·요약 기준), pron = 아기가 실제로 한 소리
     const word = mean || said;
-    const pron = (status==="say" && mean && mean!==said) ? said : "";
+    const pron = (mean && mean!==said) ? said : "";
     const before=$("inBefore").checked;
     const date= before ? today() : ($("inDate").value||today());
     const exist=words.find(w=>w.word===word);
