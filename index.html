@@ -9,7 +9,7 @@
 <title>우리 아기 말 수첩</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap">
 <style>
 /* Layout: white paper, black ink, black pill buttons; colour only comes from four crayons (blue, red, yellow, green), the way a doodle journal looks */
 :root{
@@ -18,7 +18,7 @@
   --k-blue:#2F5DB8; --k-red:#E5432D; --k-yellow:#F6C431; --k-green:#2F7D4F; --danger:#D23B26;
   --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);
   --crayon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' seed='4'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='4'/%3E%3C/filter%3E%3Cpath d='M3 13 C30 9 80 10 117 11 L116 19 C80 18 35 18 4 21 Z' fill='%237FA6EC' fill-opacity='.55' filter='url(%23c)'/%3E%3C/svg%3E");
-  --hand:"Nanum Pen Script","Gowun Dodum",cursive;
+  --hand:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --font:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -40,9 +40,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   display:flex;flex-direction:column;gap:16px}
 h1,h2,h3{font-family:var(--hand);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.02em}
-h1{font-size:2.5rem;line-height:1}
-h2{font-size:2.1rem;line-height:1.15}
-h3{font-size:1.7rem}
+h1{font-size:1.75rem;line-height:1.2}
+h2{font-size:1.4rem;line-height:1.15}
+h3{font-size:1.08rem}
 .muted{color:var(--muted)}
 .small{font-size:.9rem}
 .num{font-variant-numeric:tabular-nums}
@@ -54,7 +54,7 @@ header{display:flex;flex-direction:column;gap:2px}
 .mark i:nth-child(3){background:var(--k-yellow);transform:rotate(-4deg)}
 .mark i:nth-child(4){background:var(--k-green);transform:rotate(9deg)}
 .child{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px}
-.age{font-family:var(--hand);font-size:1.6rem;color:var(--btn)}
+.age{font-family:var(--hand);font-size:1rem;color:var(--btn)}
 button,input,select{font:inherit;color:inherit}
 .linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.9rem;align-self:flex-start}
 
@@ -66,7 +66,13 @@ button,input,select{font:inherit;color:inherit}
 label,.field{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted);min-width:0}
 input[type=text],input[type=date],select{width:100%;border:1.5px solid transparent;background:var(--field);border-radius:12px;padding:9px 12px;font-size:16px;min-width:0;height:42px}
 input[type=text]:focus,input[type=date]:focus,select:focus{border-color:var(--btn);outline:none}
+input[type=date]{-webkit-appearance:none;appearance:none;display:block;line-height:22px;text-align:left}
+input[type=date]::-webkit-date-and-time-value{text-align:left;margin:0}
+input[type=date]::-webkit-calendar-picker-indicator{opacity:.6}
 input[type=date]:disabled{opacity:.5}
+select{-webkit-appearance:none;appearance:none;padding-right:30px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.row>*{min-width:0}
+.row .check{align-self:end;height:42px}
 #inWord{font-size:17px}
 input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--btn);outline-offset:2px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -85,21 +91,22 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .danger{border:1.5px solid var(--danger);color:var(--danger);background:none;border-radius:999px;padding:11px 16px;cursor:pointer}
 
 .add{gap:10px;padding:16px}
-.addtitle{font-family:var(--hand);font-size:1.9rem;line-height:1;color:var(--ink)}
+.addtitle{font-family:var(--hand);font-size:1.15rem;line-height:1.3;color:var(--ink)}
 .add .row{gap:8px}
 .badge{font-size:.8rem;background:var(--field);color:var(--ink);border-radius:999px;padding:1px 9px}
 
-.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.filters button{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:.93rem}
-.filters button[aria-pressed="true"]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
-.filters select{width:auto;padding:7px 12px;font-size:.93rem;border-radius:999px;background:var(--field)}
-.filters .count{margin-left:auto;font-size:1.05rem;color:var(--muted)}
+.filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--field);border-radius:999px;padding:4px;gap:4px}
+.filters button{border:0;background:none;border-radius:999px;padding:7px 4px;cursor:pointer;font-size:.9rem;color:var(--muted);white-space:nowrap}
+.filters button[aria-pressed="true"]{background:var(--paper);color:var(--btn);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.filters select{height:auto;border:0;border-radius:999px;padding:7px 22px 7px 10px;font-size:.9rem;color:var(--muted);background-color:transparent;background-position:calc(100% - 13px) 50%,calc(100% - 8px) 50%;text-overflow:ellipsis}
+.filters select.on{background-color:var(--paper);color:var(--btn);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.listmeta{display:flex;justify-content:flex-end;font-size:.88rem;color:var(--muted);padding:6px 4px 0}
 
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:8px}
-.group{grid-column:1/-1;font-family:var(--hand);font-size:1.6rem;color:var(--muted);padding-top:12px}
+.group{grid-column:1/-1;font-family:var(--hand);font-size:.95rem;color:var(--muted);padding-top:12px}
 .card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:16px 14px 12px;cursor:pointer;min-width:0;box-shadow:var(--shadow);color:var(--ink)}
 .card:hover{border-color:var(--btn)}
-.card .word{font-family:var(--hand);font-size:2.4rem;line-height:1.1;overflow-wrap:anywhere;max-width:100%;letter-spacing:-.02em}
+.card .word{font-family:var(--hand);font-size:1.45rem;line-height:1.25;overflow-wrap:anywhere;max-width:100%;letter-spacing:-.02em}
 .card.say .word span{background:var(--crayon) no-repeat 0 100%/100% 75%;padding:0 4px}
 .card .pron{font-size:.92rem;color:var(--muted);overflow-wrap:anywhere;max-width:100%}
 .card .foot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:6px}
@@ -111,11 +118,11 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,var(--muted))}
 
 .empty{grid-column:1/-1;padding:32px 12px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;border:1.5px dashed var(--line);border-radius:24px}
-.empty .big{font-family:var(--hand);font-size:2rem}
+.empty .big{font-family:var(--hand);font-size:1.2rem}
 
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .stat{background:var(--field);border-radius:18px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
-.stat b{font-family:var(--hand);font-weight:400;font-size:3rem;line-height:1;letter-spacing:-.03em}
+.stat b{font-family:var(--hand);font-weight:400;font-size:2.1rem;line-height:1;letter-spacing:-.03em}
 .stat:nth-child(1) b{color:var(--btn)}.stat:nth-child(2) b{color:var(--k-green)}.stat:nth-child(3) b{color:var(--k-red)}
 .stat span{font-size:.83rem;color:var(--muted);line-height:1.35}
 .wordcloud{display:flex;flex-wrap:wrap;gap:8px}
@@ -131,7 +138,7 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .actions .primary{flex:1}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--btn);color:var(--btn-ink);padding:11px 18px;border-radius:999px;font-size:.95rem;z-index:30;max-width:calc(100% - 32px);text-align:center}
 pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding:14px;font-family:var(--font);font-size:.93rem;margin:0;overflow-x:auto}
-@media (max-width:380px){.cards{grid-template-columns:1fr 1fr}.card .word{font-size:2.1rem}.stat b{font-size:2.8rem}}
+@media (max-width:380px){.cards{grid-template-columns:1fr 1fr}.card .word{font-size:1.3rem}.stat b{font-size:1.9rem}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -160,16 +167,20 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
         <button type="button" id="stSay" aria-pressed="true">말했어요</button>
         <button type="button" id="stUnd" aria-pressed="false">알아들어요</button>
       </div>
-      <div class="cats" id="inCats" role="group" aria-label="분류 (선택)"></div>
       <div class="row">
+        <label>분류 (선택)
+          <select id="inCat"></select>
+        </label>
         <label>아기 발음 (선택)
           <input type="text" id="inPron" placeholder="예: 빠방" maxlength="40">
         </label>
+      </div>
+      <div class="row">
         <label>날짜
           <input type="date" id="inDate" required>
         </label>
+        <label class="check"><input type="checkbox" id="inBefore"> 이미 하던 말</label>
       </div>
-      <label class="check"><input type="checkbox" id="inBefore"> 이미 하던 말 (처음 날짜 모름)</label>
       <p class="small muted" style="margin:0" id="addHint" hidden>체크가 유지되니 이미 하는 말을 연달아 입력하세요.</p>
       <button class="primary" type="submit">기록하기</button>
     </form>
@@ -180,8 +191,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
         <button type="button" data-f="say" aria-pressed="false">말함</button>
         <button type="button" data-f="und" aria-pressed="false">알아듣기만</button>
         <select id="catFilter" aria-label="분류로 보기"></select>
-        <span class="count num" id="listCount"></span>
       </div>
+      <div class="listmeta num" id="listCount"></div>
       <div class="cards" id="list"></div>
     </div>
   </section>
@@ -227,9 +238,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     <h2 id="sheetTitle">단어 수정</h2>
     <label>단어 <input type="text" id="edWord" maxlength="40" required></label>
     <label>아기 발음 <input type="text" id="edPron" maxlength="40"></label>
-    <div class="field">분류
-      <div class="cats" id="edCats"></div>
-    </div>
+    <label>분류 <select id="edCat"></select></label>
     <div class="row">
       <div class="field" style="gap:8px">
         <label>알아들은 날 <input type="date" id="edUnd"></label>
@@ -252,7 +261,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
 <div class="sheet" id="childSheet" hidden>
   <form class="panel" id="childForm" autocomplete="off">
     <h2>아기 정보</h2>
-    <label>이름(애칭) <input type="text" id="cName" maxlength="20" placeholder="예: 어진"></label>
+    <label>이름(애칭) <input type="text" id="cName" maxlength="20" placeholder="예: 유준"></label>
     <label>생일 <input type="date" id="cBirth"></label>
     <p class="small muted" style="margin:0">생일은 요약 화면에 월령을 표시하는 데만 쓰입니다.</p>
     <div class="actions">
@@ -312,9 +321,11 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       el.appendChild(b);
     }
   }
-  buildCats($("inCats"), ()=>inCat, v=>inCat=v, updateBadge);
-  $("catFilter").innerHTML = '<option value="">모든 분류</option>'+CATS.map(c=>'<option>'+c+'</option>').join("")+'<option value="__none">분류 없음</option>';
-  $("catFilter").onchange = e => { catFilter=e.target.value; render(); };
+  const catOpts = '<option value="">선택 안 함</option>'+CATS.map(c=>'<option>'+c+'</option>').join("");
+  $("inCat").innerHTML = catOpts; $("edCat").innerHTML = catOpts;
+  $("inCat").onchange = e => { inCat = e.target.value; };
+  $("catFilter").innerHTML = '<option value="">분류</option>'+CATS.map(c=>'<option>'+c+'</option>').join("")+'<option value="__none">분류 없음</option>';
+  $("catFilter").onchange = e => { catFilter=e.target.value; e.target.classList.toggle("on", !!catFilter); render(); };
 
   function updateBadge(){}
 
@@ -327,7 +338,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       .filter(w => filter==="all" || (filter==="say" ? !!w.say : (!w.say && !!w.und)))
       .filter(w => !catFilter || (catFilter==="__none" ? !w.cat : w.cat===catFilter))
       .sort((a,b)=> (isBefore(a)-isBefore(b)) || latest(b).localeCompare(latest(a)) || a.word.localeCompare(b.word,"ko"));
-    $("listCount").textContent = shown.length+"개";
+    $("listCount").textContent = shown.length+"개 단어";
     const list=$("list"); list.innerHTML="";
     if(!words.length){
       list.innerHTML = '<div class="empty"><div class="big">첫 단어를 기다리는 중</div><div class="small muted">처음이라면 ‘이미 하던 말’에 체크하고, 지금 하는 말부터 한꺼번에 적어두세요.</div></div>';
@@ -419,7 +430,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     saveWord(w);
     toast(exist ? "‘"+word+"’ 기록을 업데이트했어요" : "‘"+word+"’ 기록했어요");
     $("inWord").value=""; $("inPron").value="";
-    if(inCat){ inCat=""; $("inCats").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false")); updateBadge(); }
+    if(inCat){ inCat=""; $("inCat").value=""; }
     $("inWord").focus();
   });
 
@@ -441,7 +452,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     $("edWord").value=w.word; $("edPron").value=w.pron||"";
     $("edUnd").value=w.und||""; $("edSay").value=w.say||"";
     $("edUndBefore").checked=!!w.undBefore; $("edSayBefore").checked=!!w.sayBefore;
-    edCat=w.cat||""; buildCats($("edCats"), ()=>edCat, v=>edCat=v);
+    $("edCat").value=w.cat||"";
     $("sheet").hidden=false; $("edWord").focus();
   }
   function closeEdit(){ $("sheet").hidden=true; editingId=null; }
@@ -451,7 +462,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     e.preventDefault();
     const und=$("edUnd").value, say=$("edSay").value;
     if(!und && !say){ toast("날짜를 하나 이상 넣어주세요"); return; }
-    const w={id:editingId, word:$("edWord").value.trim().replace(/\s+/g," "), pron:$("edPron").value.trim(), cat:edCat,
+    const w={id:editingId, word:$("edWord").value.trim().replace(/\s+/g," "), pron:$("edPron").value.trim(), cat:$("edCat").value,
       und, undBefore: !!und && $("edUndBefore").checked, say, sayBefore: !!say && $("edSayBefore").checked};
     if(!w.word) return;
     saveWord(w); closeEdit(); toast("저장했어요");
