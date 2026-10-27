@@ -72,7 +72,7 @@ button,input,select{font:inherit;color:inherit}
 
 .panel{background:var(--paper);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow);border:1px solid var(--line)}
 label,.field{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted);min-width:0}
-input[type=text],input[type=date],select{width:100%;border:1.5px solid transparent;background:var(--field);border-radius:12px;padding:9px 12px;font-size:16px;min-width:0;height:42px}
+input[type=text],input[type=date],select{width:100%;border:1.5px solid transparent;background:var(--field);border-radius:12px;padding:9px 12px;font-size:16px;min-width:0;height:40px}
 input[type=text]:focus,input[type=date]:focus,select:focus{border-color:var(--btn);outline:none}
 input[type=date]{-webkit-appearance:none;appearance:none;display:block;line-height:22px;text-align:left}
 input[type=date]::-webkit-date-and-time-value{text-align:left;margin:0}
@@ -81,7 +81,7 @@ input[type=date]:disabled{opacity:.5}
 select{-webkit-appearance:none;appearance:none;padding-right:30px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat}
 .row>*{min-width:0}
 .row.solo{grid-template-columns:1fr}
-.row .check{align-self:end;height:42px}
+.row .check{align-self:end;height:40px}
 #inWord{font-size:17px}
 input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--btn);outline-offset:2px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -128,11 +128,14 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .card .play{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:0;background:var(--btn-soft);color:var(--btn);display:grid;place-items:center;cursor:pointer;padding:0}
 .card .play svg{width:14px;height:14px;fill:currentColor}
 .card.has-audio .word{padding-right:34px}
-.notice{font-size:.76rem;color:var(--muted);margin:0;padding:0 6px;display:flex;gap:6px;align-items:flex-start}
+.notice{font-size:.72rem;white-space:nowrap;overflow:hidden;color:var(--muted);margin:0;padding:0 6px;display:flex;gap:6px;align-items:flex-start}
 .notice svg{width:12px;height:12px;flex:none;margin-top:2px;fill:none;stroke:currentColor;stroke-width:2}
 .banner{background:var(--btn-soft);border-radius:12px;padding:7px 10px 7px 12px;font-size:.78rem;display:flex;gap:8px;align-items:center;line-height:1.45}
 .banner p{margin:0;flex:1;min-width:0}
 .banner b{font-weight:400;color:var(--btn)}
+.mini-banner{padding:3px 6px 3px 12px;font-size:.7rem;border-radius:999px}
+.mini-banner p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-banner button{font-size:.75rem;padding:2px 6px}
 .banner button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.78rem;padding:2px 4px;white-space:nowrap}
 .banner button.go{color:var(--btn);text-decoration:underline;text-underline-offset:3px}
 .listmeta{display:flex;justify-content:flex-end;font-size:.88rem;color:var(--muted);padding:6px 4px 0}
@@ -196,7 +199,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
 
   <!-- 기록 -->
   <section id="viewLog" style="display:flex;flex-direction:column;gap:10px">
-    <div class="banner" id="installBanner" hidden><p id="installText"></p><button type="button" id="installClose">닫기</button></div>
+    <div class="banner mini-banner" id="installBanner" hidden><p id="installText"></p><button type="button" id="installClose" aria-label="안내 닫기">✕</button></div>
     <div class="banner" id="backupBanner" hidden><p id="backupText"></p><button type="button" class="go" id="backupGo">백업하기</button></div>
     <form class="panel add" id="addForm" autocomplete="off">
       <div class="seg" role="group" aria-label="상태">
@@ -208,17 +211,11 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
         <input type="text" id="inWord" placeholder="들린 그대로 · 예: 빠방, 엄마 저" maxlength="40" required>
       </label>
       <div class="row">
-        <label id="meanWrap">뜻 (선택)
-          <input type="text" id="inPron" placeholder="예: 자동차" maxlength="40">
-        </label>
-        <label>분류 (선택)
-          <select id="inCat"></select>
-        </label>
+        <label id="meanWrap"><input type="text" id="inPron" placeholder="뜻 (예: 자동차)" maxlength="40" aria-label="뜻"></label>
+        <label><select id="inCat" aria-label="분류"></select></label>
       </div>
       <div class="row">
-        <label>날짜
-          <input type="date" id="inDate" required>
-        </label>
+        <label><input type="date" id="inDate" required aria-label="날짜"></label>
         <label class="check"><input type="checkbox" id="inBefore"> 이미 하던 말</label>
       </div>
       <p class="small muted" style="margin:0" id="addHint" hidden>체크가 유지되니 이미 하는 말을 연달아 입력하세요.</p>
@@ -233,7 +230,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       </div>
     </form>
     <button type="button" class="recent" id="recent" hidden></button>
-    <p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>기록·녹음은 이 기기에만 저장돼요 (서버 전송·로그인 없음)</span></p>
+    <p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>기록·녹음은 이 기기에만 저장돼요 · 서버 전송, 로그인 없음</span></p>
   </section>
 
   <!-- 목록 -->
@@ -450,7 +447,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     }
   }
   const catOpts = '<option value="">선택 안 함</option>'+CATS.map(c=>'<option>'+c+'</option>').join("");
-  $("inCat").innerHTML = catOpts; $("edCat").innerHTML = catOpts;
+  $("inCat").innerHTML = catOpts.replace(">선택 안 함<",">분류 (선택)<"); $("edCat").innerHTML = catOpts;
   $("inCat").onchange = e => { inCat = e.target.value; };
   $("catFilter").innerHTML = '<option value="">분류</option>'+CATS.map(c=>'<option>'+c+'</option>').join("")+'<option value="__none">분류 없음</option>';
   $("catFilter").onchange = e => { catFilter=e.target.value; e.target.classList.toggle("on", !!catFilter); render(); };
@@ -701,8 +698,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     const mobile = ios || /Android/.test(ua);
     if(standalone || !mobile || lsGet("first-words-installHint")==="off") return;
     $("installText").innerHTML = ios
-      ? "공유 → <b>‘홈 화면에 추가’</b>로 앱처럼 쓰면 기록이 자동 삭제되지 않아요."
-      : "메뉴(⋮) → <b>‘홈 화면에 추가’</b>로 앱처럼 쓰면 기록이 더 안전해요.";
+      ? "공유 → <b>홈 화면에 추가</b>하면 앱처럼, 기록도 안전하게"
+      : "메뉴(⋮) → <b>홈 화면에 추가</b>하면 앱처럼, 기록도 안전하게";
     $("installBanner").hidden=false;
     $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); };
   })();
