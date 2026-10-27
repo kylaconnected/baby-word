@@ -611,26 +611,52 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     }
     cur=which; window.scrollTo(0,0);
   }
-  // ---------- swipe between tabs ----------
+  // ---------- swipe between tabs (화면이 손가락을 따라 움직임) ----------
   (function(){
-    let x0=null,y0=0,t0=0;
-    const area=document.querySelector(".wrap");
-    area.addEventListener("touchstart",e=>{
-      if(e.touches.length!==1 || !$("sheet").hidden || !$("childSheet").hidden){ x0=null; return; }
-      const t=e.touches[0], w=window.innerWidth;
-      if(t.clientX<24 || t.clientX>w-24){ x0=null; return; }          // 화면 가장자리는 브라우저 뒤로가기 제스처에 양보
-      if(e.target.closest("input,select,textarea,.filters,.cats")){ x0=null; return; }
-      x0=t.clientX; y0=t.clientY; t0=Date.now();
+    let sx=0, sy=0, st=0, lock=null, active=false, view=null;
+    const W=()=>window.innerWidth;
+    const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function neighbor(dx){ const k=ORDER.indexOf(cur)+(dx<0?1:-1); return (k>=0 && k<ORDER.length) ? ORDER[k] : null; }
+    function setX(x, anim){
+      view.style.transition = anim ? "transform .2s ease-out, opacity .2s ease-out" : "none";
+      view.style.transform = x ? "translateX("+x+"px)" : "";
+      view.style.opacity = x ? String(Math.max(.35, 1-Math.abs(x)/W()*.9)) : "";
+    }
+    document.addEventListener("touchstart",e=>{
+      active=false; lock=null;
+      if(e.touches.length!==1 || !$("sheet").hidden || !$("childSheet").hidden) return;
+      const t=e.touches[0];
+      if(t.clientX<20 || t.clientX>W()-20) return;                       // 가장자리는 브라우저 뒤로가기 제스처용
+      if(e.target.closest("input,select,textarea")) return;
+      sx=t.clientX; sy=t.clientY; st=Date.now(); active=true; view=$(TABS[cur][1]);
     },{passive:true});
-    area.addEventListener("touchend",e=>{
-      if(x0===null) return;
-      const t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0; x0=null;
-      if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.5 || Date.now()-t0>800) return;
-      const i=ORDER.indexOf(cur)+(dx<0?1:-1);
-      if(i<0 || i>=ORDER.length) return;
-      if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
-      tab(ORDER[i], dx<0?1:-1);
-    },{passive:true});
+    document.addEventListener("touchmove",e=>{
+      if(!active) return;
+      const t=e.touches[0], dx=t.clientX-sx, dy=t.clientY-sy;
+      if(lock===null){
+        if(Math.abs(dx)<8 && Math.abs(dy)<8) return;
+        lock = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+        if(lock==="y"){ active=false; return; }
+      }
+      e.preventDefault();                                                 // 가로로 미는 동안 세로 스크롤 막기
+      setX(neighbor(dx) ? dx : dx*.25, false);                            // 끝 탭에서는 살짝만 끌림
+    },{passive:false});
+    function end(e){
+      if(!active || lock!=="x"){ active=false; return; }
+      active=false;
+      const t=e.changedTouches[0], dx=t.clientX-sx, v=Math.abs(dx)/Math.max(1,Date.now()-st);
+      const next=neighbor(dx);
+      if(next && (Math.abs(dx)>W()*.2 || (v>.35 && Math.abs(dx)>30))){
+        const out = dx<0 ? -W() : W(); const v0=view;
+        if(reduce){ v0.style.cssText=v0.style.cssText.replace(/transform[^;]*;?|opacity[^;]*;?|transition[^;]*;?/g,""); tab(next,0); return; }
+        setX(out*.6, true);
+        setTimeout(()=>{ v0.style.transition="none"; v0.style.transform=""; v0.style.opacity=""; tab(next, dx<0?1:-1); },160);
+      } else {
+        setX(0, true);
+      }
+    }
+    document.addEventListener("touchend",end,{passive:true});
+    document.addEventListener("touchcancel",()=>{ if(active&&view) setX(0,true); active=false; },{passive:true});
   })();
   $("tabLog").onclick=()=>tab("log",ORDER.indexOf(cur)>0?-1:0); $("tabList").onclick=()=>tab("list",cur==="log"?1:cur==="sum"?-1:0); $("tabSum").onclick=()=>tab("sum",cur==="sum"?0:1);
   $("recent").onclick=()=>tab("list",1);
