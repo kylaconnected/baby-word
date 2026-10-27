@@ -5,30 +5,32 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="아기가 말하거나 알아들은 단어를 날짜와 함께 기록하고, 영유아검진 문진용 요약을 보여주는 기록장">
 <meta name="theme-color" content="#FFFFFF">
+<!-- v: blue + handwriting -->
 <title>우리 아기 말 수첩</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hi+Melody&family=Gowun+Dodum&display=swap">
 <style>
 /* Layout: white paper, black ink, black pill buttons; colour only comes from four crayons (blue, red, yellow, green), the way a doodle journal looks */
 :root{
   --bg:#FFFFFF; --paper:#FFFFFF; --field:#F4F4F2; --ink:#1B1B1B; --muted:#8C8C88; --line:#ECECE8;
-  --btn:#1B1B1B; --btn-ink:#FFFFFF;
+  --btn:#2F5DB8; --btn-ink:#FFFFFF; --btn-soft:#E8EFFB;
   --k-blue:#2F5DB8; --k-red:#E5432D; --k-yellow:#F6C431; --k-green:#2F7D4F; --danger:#D23B26;
   --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);
-  --crayon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' seed='4'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='4'/%3E%3C/filter%3E%3Cpath d='M3 13 C30 9 80 10 117 11 L116 19 C80 18 35 18 4 21 Z' fill='%23F6C431' fill-opacity='.9' filter='url(%23c)'/%3E%3C/svg%3E");
+  --crayon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' seed='4'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='4'/%3E%3C/filter%3E%3Cpath d='M3 13 C30 9 80 10 117 11 L116 19 C80 18 35 18 4 21 Z' fill='%237FA6EC' fill-opacity='.55' filter='url(%23c)'/%3E%3C/svg%3E");
+  --hand:"Hi Melody","Gowun Dodum",cursive;
   --font:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#121212; --paper:#1D1D1D; --field:#262626; --ink:#F2F2EF; --muted:#9A9A95; --line:#2C2C2A;
-  --btn:#F2F2EF; --btn-ink:#121212;
-  --k-blue:#6F95E0; --k-red:#F06B57; --k-yellow:#F6C431; --k-green:#5DAE7E; --danger:#F06B57;
+  --btn:#7FA3EA; --btn-ink:#0E1A33; --btn-soft:#1F2B44;
+  --k-blue:#7FA3EA; --k-red:#F06B57; --k-yellow:#F6C431; --k-green:#5DAE7E; --danger:#F06B57;
   --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#121212; --paper:#1D1D1D; --field:#262626; --ink:#F2F2EF; --muted:#9A9A95; --line:#2C2C2A;
-  --btn:#F2F2EF; --btn-ink:#121212;
-  --k-blue:#6F95E0; --k-red:#F06B57; --k-yellow:#F6C431; --k-green:#5DAE7E; --danger:#F06B57;
+  --btn:#7FA3EA; --btn-ink:#0E1A33; --btn-soft:#1F2B44;
+  --k-blue:#7FA3EA; --k-red:#F06B57; --k-yellow:#F6C431; --k-green:#5DAE7E; --danger:#F06B57;
   --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -37,10 +39,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font
 .wrap{max-width:600px;margin:0 auto;padding-block:28px 56px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   display:flex;flex-direction:column;gap:20px}
-h1,h2,h3{font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.02em}
-h1{font-size:1.9rem;line-height:1.2}
-h2{font-size:1.45rem;line-height:1.25}
-h3{font-size:1.15rem}
+h1,h2,h3{font-family:var(--hand);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.02em}
+h1{font-size:2.6rem;line-height:1.1}
+h2{font-size:2rem;line-height:1.15}
+h3{font-size:1.55rem}
 .muted{color:var(--muted)}
 .small{font-size:.9rem}
 .num{font-variant-numeric:tabular-nums}
@@ -52,7 +54,7 @@ header{display:flex;flex-direction:column;gap:4px}
 .mark i:nth-child(3){background:var(--k-yellow);transform:rotate(-4deg)}
 .mark i:nth-child(4){background:var(--k-green);transform:rotate(9deg)}
 .child{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px}
-.age{font-size:1.05rem;color:var(--muted)}
+.age{font-family:var(--hand);font-size:1.5rem;color:var(--btn)}
 button,input,select{font:inherit;color:inherit}
 .linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.9rem;align-self:flex-start}
 
@@ -63,14 +65,14 @@ button,input,select{font:inherit;color:inherit}
 .panel{background:var(--paper);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow);border:1px solid var(--line)}
 label,.field{display:flex;flex-direction:column;gap:6px;font-size:.92rem;color:var(--muted);min-width:0}
 input[type=text],input[type=date],select{width:100%;border:1.5px solid transparent;background:var(--field);border-radius:14px;padding:12px 14px;font-size:18px;min-width:0}
-input[type=text]:focus,input[type=date]:focus,select:focus{border-color:var(--ink);outline:none}
+input[type=text]:focus,input[type=date]:focus,select:focus{border-color:var(--btn);outline:none}
 input[type=date]:disabled{opacity:.5}
 #inWord{font-size:22px;padding:15px 16px}
-input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--btn);outline-offset:2px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .seg button{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:11px;cursor:pointer;font-size:1.02rem;color:var(--muted)}
-.seg button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink)}
+.seg button[aria-pressed="true"]{border-color:var(--btn);background:var(--btn-soft);color:var(--btn)}
 .cats{display:flex;flex-wrap:wrap;gap:8px}
 .cats button{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 13px 6px 10px;cursor:pointer;font-size:.93rem;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
 .cats button::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c,var(--muted))}
@@ -97,11 +99,11 @@ details.more .inner{display:flex;flex-direction:column;gap:14px;padding-top:14px
 .filters .count{margin-left:auto;font-size:1.05rem;color:var(--muted)}
 
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:8px}
-.group{grid-column:1/-1;font-size:1rem;color:var(--muted);padding-top:12px}
+.group{grid-column:1/-1;font-family:var(--hand);font-size:1.45rem;color:var(--muted);padding-top:12px}
 .card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:16px 14px 12px;cursor:pointer;min-width:0;box-shadow:var(--shadow);color:var(--ink)}
-.card:hover{border-color:var(--ink)}
-.card .word{font-size:1.55rem;line-height:1.2;overflow-wrap:anywhere;max-width:100%;letter-spacing:-.02em}
-.card.say .word span{background:var(--crayon) no-repeat 0 95%/100% 95%;padding:0 4px}
+.card:hover{border-color:var(--btn)}
+.card .word{font-family:var(--hand);font-size:2.2rem;line-height:1.1;overflow-wrap:anywhere;max-width:100%;letter-spacing:-.02em}
+.card.say .word span{background:var(--crayon) no-repeat 0 100%/100% 75%;padding:0 4px}
 .card .pron{font-size:.92rem;color:var(--muted);overflow-wrap:anywhere;max-width:100%}
 .card .foot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:6px}
 .st{font-size:.78rem;border-radius:999px;padding:2px 9px;white-space:nowrap}
@@ -112,12 +114,12 @@ details.more .inner{display:flex;flex-direction:column;gap:14px;padding-top:14px
 .tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,var(--muted))}
 
 .empty{grid-column:1/-1;padding:32px 12px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;border:1.5px dashed var(--line);border-radius:24px}
-.empty .big{font-size:1.3rem}
+.empty .big{font-family:var(--hand);font-size:1.8rem}
 
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .stat{background:var(--field);border-radius:18px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
-.stat b{font-weight:400;font-size:2.3rem;line-height:1;letter-spacing:-.03em}
-.stat:nth-child(1) b{color:var(--k-blue)}.stat:nth-child(2) b{color:var(--k-green)}.stat:nth-child(3) b{color:var(--k-red)}
+.stat b{font-family:var(--hand);font-weight:400;font-size:3rem;line-height:1;letter-spacing:-.03em}
+.stat:nth-child(1) b{color:var(--btn)}.stat:nth-child(2) b{color:var(--k-green)}.stat:nth-child(3) b{color:var(--k-red)}
 .stat span{font-size:.83rem;color:var(--muted);line-height:1.35}
 .wordcloud{display:flex;flex-wrap:wrap;gap:8px}
 .wordcloud span{background:var(--field);border-radius:999px;padding:4px 12px;font-size:.98rem}
@@ -132,7 +134,7 @@ details.more .inner{display:flex;flex-direction:column;gap:14px;padding-top:14px
 .actions .primary{flex:1}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--btn);color:var(--btn-ink);padding:11px 18px;border-radius:999px;font-size:.95rem;z-index:30;max-width:calc(100% - 32px);text-align:center}
 pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding:14px;font-family:var(--font);font-size:.93rem;margin:0;overflow-x:auto}
-@media (max-width:380px){.cards{grid-template-columns:1fr 1fr}.card .word{font-size:1.35rem}.stat b{font-size:2rem}}
+@media (max-width:380px){.cards{grid-template-columns:1fr 1fr}.card .word{font-size:1.9rem}.stat b{font-size:2.6rem}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -155,7 +157,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   <!-- 기록 -->
   <section id="viewLog" style="display:flex;flex-direction:column;gap:18px">
     <form class="panel" id="addForm" autocomplete="off">
-      <label for="inWord" style="font-size:1.25rem;color:var(--ink)">오늘 들은 말</label>
+      <label for="inWord" style="font-family:var(--hand);font-size:1.7rem;line-height:1.1;color:var(--ink)">오늘 들은 말</label>
       <input type="text" id="inWord" placeholder="예: 자동차, 엄마 줘" maxlength="40" required aria-label="단어">
       <div class="seg" role="group" aria-label="상태">
         <button type="button" id="stSay" aria-pressed="true">말했어요</button>
