@@ -7,6 +7,13 @@
 <meta name="theme-color" content="#FFFFFF">
 <!-- v: blue + handwriting -->
 <title>우리 아기 말 수첩</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="말 수첩">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap">
@@ -103,6 +110,24 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .recent{border:0;background:none;text-align:left;padding:2px 6px;color:var(--muted);font-size:.9rem;cursor:pointer;line-height:1.5}
 .recent b{font-weight:400;color:var(--ink)}
 .recent span{color:var(--btn);white-space:nowrap}
+.rec{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.recbtn{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:7px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:.93rem;color:var(--ink)}
+.recbtn .dot{width:10px;height:10px;border-radius:50%;background:var(--k-red);flex:none}
+.recbtn.on{border-color:var(--k-red);color:var(--k-red)}
+.recbtn.on .dot{animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.2}}
+.mini{border:0;background:var(--field);border-radius:999px;padding:7px 12px;cursor:pointer;font-size:.88rem;color:var(--ink)}
+.card{position:relative}
+.card .play{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:0;background:var(--btn-soft);color:var(--btn);display:grid;place-items:center;cursor:pointer;padding:0}
+.card .play svg{width:14px;height:14px;fill:currentColor}
+.card.has-audio .word{padding-right:34px}
+.notice{font-size:.82rem;color:var(--muted);margin:0;padding:0 6px;display:flex;gap:6px;align-items:flex-start}
+.notice svg{width:13px;height:13px;flex:none;margin-top:3px;fill:none;stroke:currentColor;stroke-width:2}
+.banner{background:var(--btn-soft);border-radius:16px;padding:12px 14px;font-size:.9rem;display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.banner p{margin:0;flex:1;min-width:0}
+.banner b{font-weight:400;color:var(--btn)}
+.banner button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:2px 4px;white-space:nowrap}
+.banner button.go{color:var(--btn);text-decoration:underline;text-underline-offset:3px}
 .listmeta{display:flex;justify-content:flex-end;font-size:.88rem;color:var(--muted);padding:6px 4px 0}
 
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:8px}
@@ -163,7 +188,9 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   </div>
 
   <!-- 기록 -->
-  <section id="viewLog" style="display:flex;flex-direction:column;gap:18px">
+  <section id="viewLog" style="display:flex;flex-direction:column;gap:14px">
+    <div class="banner" id="installBanner" hidden><p id="installText"></p><button type="button" id="installClose">닫기</button></div>
+    <div class="banner" id="backupBanner" hidden><p id="backupText"></p><button type="button" class="go" id="backupGo">백업하기</button></div>
     <form class="panel add" id="addForm" autocomplete="off">
       <label for="inWord" class="addtitle">오늘 들은 말</label>
       <input type="text" id="inWord" placeholder="예: 자동차, 엄마 줘" maxlength="40" required aria-label="단어">
@@ -185,10 +212,17 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
         </label>
         <label class="check"><input type="checkbox" id="inBefore"> 이미 하던 말</label>
       </div>
+      <div class="rec" id="inRec">
+        <button type="button" class="recbtn" id="inRecBtn"><span class="dot"></span><span>목소리 녹음</span></button>
+        <button type="button" class="mini" id="inRecPlay" hidden>듣기</button>
+        <button type="button" class="mini" id="inRecDel" hidden>지우기</button>
+        <span class="small muted num" id="inRecInfo"></span>
+      </div>
       <p class="small muted" style="margin:0" id="addHint" hidden>체크가 유지되니 이미 하는 말을 연달아 입력하세요.</p>
       <button class="primary" type="submit">기록하기</button>
     </form>
     <button type="button" class="recent" id="recent" hidden></button>
+    <p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>기록과 녹음은 이 기기에만 저장되고, 서버나 다른 곳으로 전송되지 않아요. 로그인도 필요 없어요.</span></p>
   </section>
 
   <!-- 목록 -->
@@ -230,8 +264,10 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
 
     <div class="panel">
       <h3>백업</h3>
-      <p class="small muted" style="margin:0">기록은 이 기기의 브라우저에만 저장돼요. 브라우저 데이터를 지우면 사라지니 가끔 백업 파일을 받아두세요. 다른 기기로 옮길 때도 이 파일을 불러오면 됩니다.</p>
-      <div class="actions">
+      <p class="small muted" style="margin:0">기록과 녹음은 이 기기의 브라우저에만 저장돼요. 브라우저 데이터를 지우거나 휴대폰을 바꾸면 사라지니, 2주에 한 번쯤 백업 파일을 받아 ‘파일’ 앱이나 클라우드 드라이브에 보관하세요. 다른 기기로 옮길 때도 이 파일을 불러오면 됩니다.</p>
+      <p class="small num" style="margin:0" id="lastBackup"></p>
+      <label class="check"><input type="checkbox" id="bkAudio" checked> 녹음도 함께 백업 <span class="muted small num" id="bkSize"></span></label>
+      <div class="actions" id="backupActions">
         <button class="ghost" type="button" id="exportBtn">백업 파일 받기</button>
         <label class="ghost" style="flex-direction:row;cursor:pointer;color:var(--ink);font-size:inherit">백업 불러오기<input type="file" id="importFile" accept="application/json,.json" hidden></label>
       </div>
@@ -247,6 +283,12 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     <label>단어 <input type="text" id="edWord" maxlength="40" required></label>
     <label>아기 발음 <input type="text" id="edPron" maxlength="40"></label>
     <label>분류 <select id="edCat"></select></label>
+    <div class="rec">
+      <button type="button" class="recbtn" id="edRecBtn"><span class="dot"></span><span>목소리 녹음</span></button>
+      <button type="button" class="mini" id="edRecPlay" hidden>듣기</button>
+      <button type="button" class="mini" id="edRecDel" hidden>녹음 지우기</button>
+      <span class="small muted num" id="edRecInfo"></span>
+    </div>
     <div class="row">
       <div class="field" style="gap:8px">
         <label>알아들은 날 <input type="date" id="edUnd"></label>
@@ -298,8 +340,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   function lsSave(){ try{ localStorage.setItem(LS, JSON.stringify({words, child})); }catch(e){ toast("이 브라우저에 저장하지 못했어요. 사생활 보호 모드인지 확인해 주세요."); } }
   lsLoad();
 
-  function saveWord(w){ const i=words.findIndex(x=>x.id===w.id); if(i<0) words.push(w); else words[i]=w; lsSave(); render(); }
-  function removeWord(id){ words = words.filter(x=>x.id!==id); lsSave(); render(); }
+  function saveWord(w){ const i=words.findIndex(x=>x.id===w.id); if(i<0) words.push(w); else words[i]=w; lsSave(); render(); askPersist(); }
+  function removeWord(id){ words = words.filter(x=>x.id!==id); lsSave(); render(); audioDB.del(id).catch(()=>{}); }
   function saveChild(c){ child=c; lsSave(); render(); }
   function newId(){ return "w"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
@@ -318,7 +360,72 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   const latest = w => w.say || w.und || "";
   const isBefore = w => w.say ? !!w.sayBefore : !!w.undBefore;
   const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  let toastT; function toast(msg){ const t=$("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,2200); }
+  let toastT; function toast(msg){ const t=$("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,2600); }
+  const lsGet=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } };
+  const lsSet=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
+
+  // ---------- audio store (IndexedDB, this device only) ----------
+  const audioDB=(()=>{
+    let p;
+    const open=()=> p || (p=new Promise((res,rej)=>{
+      const q=indexedDB.open("baby-words",1);
+      q.onupgradeneeded=()=>q.result.createObjectStore("audio");
+      q.onsuccess=()=>res(q.result); q.onerror=()=>rej(q.error);
+    }));
+    const run=async(mode,fn)=>{ const d=await open(); return new Promise((res,rej)=>{ const t=d.transaction("audio",mode); const q=fn(t.objectStore("audio")); t.oncomplete=()=>res(q&&q.result); t.onerror=()=>rej(t.error); }); };
+    return {
+      put: async(id,blob)=>{ const buf=await blob.arrayBuffer(); return run("readwrite",s=>s.put({type:blob.type,buf},id)); },
+      get: async id=>{ const v=await run("readonly",s=>s.get(id)); return v ? new Blob([v.buf],{type:v.type}) : null; },
+      del: id=>run("readwrite",s=>s.delete(id)),
+    };
+  })();
+  let persisted=false;
+  function askPersist(){ if(persisted) return; persisted=true; try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){} }
+
+  const player=new Audio(); let playerUrl="";
+  function playBlob(b){ if(!b) return; if(playerUrl) URL.revokeObjectURL(playerUrl); playerUrl=URL.createObjectURL(b); player.src=playerUrl; player.play().catch(()=>toast("재생하지 못했어요")); }
+  async function playWord(id){ try{ playBlob(await audioDB.get(id)); }catch(e){ toast("녹음을 불러오지 못했어요"); } }
+
+  const canRec=!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+  const MAX_SEC=10;
+  function pickMime(){ for(const t of ["audio/mp4","audio/webm;codecs=opus","audio/webm"]){ try{ if(MediaRecorder.isTypeSupported(t)) return t; }catch(e){} } return ""; }
+  function makeRecorder(pre){
+    const btn=$(pre+"RecBtn"), play=$(pre+"RecPlay"), del=$(pre+"RecDel"), info=$(pre+"RecInfo"), label=btn.lastElementChild;
+    const st={blob:null, existing:false, removed:false, mr:null, stream:null, timer:null, t0:0};
+    function ui(){
+      const recording=!!st.mr;
+      btn.classList.toggle("on",recording);
+      const has=!!st.blob || (st.existing && !st.removed);
+      label.textContent = recording ? "녹음 중 · 탭하면 멈춤" : (has ? "다시 녹음" : "목소리 녹음");
+      play.hidden = recording || !has; del.hidden = recording || !has;
+      if(!recording) info.textContent = st.blob ? "새 녹음 "+st.sec+"초" : "";
+    }
+    function stop(){ if(st.mr && st.mr.state!=="inactive") st.mr.stop(); }
+    async function start(){
+      try{
+        st.stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      }catch(e){ toast(e && e.name==="NotAllowedError" ? "마이크가 허용되지 않았어요. 브라우저 설정에서 이 사이트의 마이크를 허용해 주세요." : "마이크를 사용할 수 없어요"); return; }
+      const mime=pickMime(); const chunks=[];
+      st.mr = mime ? new MediaRecorder(st.stream,{mimeType:mime}) : new MediaRecorder(st.stream);
+      st.mr.ondataavailable=e=>{ if(e.data && e.data.size) chunks.push(e.data); };
+      st.mr.onstop=()=>{
+        st.stream.getTracks().forEach(t=>t.stop()); clearInterval(st.timer);
+        st.sec=Math.max(1,Math.round((Date.now()-st.t0)/1000));
+        st.blob=new Blob(chunks,{type:st.mr.mimeType||mime||"audio/mp4"}); st.mr=null; st.removed=false; ui();
+      };
+      st.t0=Date.now(); st.mr.start();
+      st.timer=setInterval(()=>{ const s=Math.floor((Date.now()-st.t0)/1000); info.textContent=s+" / "+MAX_SEC+"초"; if(s>=MAX_SEC) stop(); },250);
+      ui();
+    }
+    btn.onclick=()=>{ st.mr ? stop() : start(); };
+    play.onclick=()=>{ st.blob ? playBlob(st.blob) : (editingId && playWord(editingId)); };
+    del.onclick=()=>{ st.blob=null; if(st.existing) st.removed=true; ui(); };
+    if(!canRec) btn.parentElement.hidden=true;
+    return {
+      reset(existing){ stop(); st.blob=null; st.existing=!!existing; st.removed=false; ui(); },
+      get blob(){ return st.blob; }, get removed(){ return st.removed; }, get busy(){ return !!st.mr; }
+    };
+  }
 
   function buildCats(el, get, set, onChange){
     el.innerHTML="";
@@ -358,9 +465,10 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       const grp = isBefore(w) ? "before" : latest(w).slice(0,7);
       if(grp!==lastGroup){ lastGroup=grp; const h=document.createElement("div"); h.className="group num";
         h.textContent = grp==="before" ? "기록 시작 전부터 하던 말" : (+grp.slice(0,4))+"년 "+(+grp.slice(5,7))+"월"; list.appendChild(h); }
-      const b=document.createElement("button"); b.type="button"; b.className="card"+(w.say?" say":"");
+      const b=document.createElement("div"); b.setAttribute("role","button"); b.tabIndex=0; b.className="card"+(w.say?" say":"")+(w.hasAudio?" has-audio":"");
       const d = w.say ? w.say : w.und, before = w.say ? w.sayBefore : w.undBefore;
       b.innerHTML =
+        (w.hasAudio? '<button type="button" class="play" aria-label="'+esc(w.word)+' 녹음 듣기"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>' : '')+
         '<span class="word"><span>'+esc(w.word)+'</span></span>'+
         (w.pron? '<span class="pron">“'+esc(w.pron)+'”</span>' : '')+
         '<span class="foot">'+
@@ -369,7 +477,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
           (w.cat? '<span class="tag" style="--c:'+catColor(w.cat)+'">'+esc(w.cat)+'</span>' : '')+
         '</span>';
       b.setAttribute("aria-label", w.word+" 수정");
-      b.addEventListener("click",()=>openEdit(w.id));
+      b.addEventListener("click",e=>{ if(e.target.closest(".play")){ e.stopPropagation(); playWord(w.id); return; } openEdit(w.id); });
+      b.addEventListener("keydown",e=>{ if((e.key==="Enter"||e.key===" ") && e.target===b){ e.preventDefault(); openEdit(w.id); } });
       list.appendChild(b);
     }
     renderSummary();
@@ -383,8 +492,17 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     r.hidden=false;
   }
 
+  function renderBanners(){
+    const lb=lsGet("first-words-lastBackup");
+    const days = lb ? Math.floor((new Date(today())-new Date(lb))/86400000) : null;
+    $("lastBackup").textContent = lb ? "마지막 백업: "+fmt(lb)+(days>0?" ("+days+"일 전)":" (오늘)") : "아직 백업한 적이 없어요.";
+    const need = words.length>=5 && (days===null || days>=14);
+    $("backupBanner").hidden=!need;
+    if(need) $("backupText").innerHTML = days===null ? "단어가 <b>"+words.length+"개</b> 쌓였어요. 기기에만 저장되니 백업 파일을 한 번 받아두세요." : "마지막 백업 후 <b>"+days+"일</b>이 지났어요.";
+  }
+
   function renderSummary(){
-    renderRecent();
+    renderRecent(); renderBanners();
     const t=today();
     const cut=new Date(t+"T00:00"); cut.setDate(cut.getDate()-30); const cutS=cut.toISOString().slice(0,10);
     const say=words.filter(w=>w.say).sort((a,b)=>a.say.localeCompare(b.say));
@@ -425,8 +543,10 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     $("addHint").hidden = !on;
     updateBadge();
   });
-  $("addForm").addEventListener("submit", e=>{
+  const inRec=makeRecorder("in");
+  $("addForm").addEventListener("submit", async e=>{
     e.preventDefault();
+    if(inRec.busy){ toast("녹음을 먼저 멈춰 주세요"); return; }
     const word=$("inWord").value.trim().replace(/\s+/g," "); if(!word) return;
     const pron=$("inPron").value.trim();
     const before=$("inBefore").checked;
@@ -444,7 +564,11 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
          und: status==="und"?date:"", undBefore: status==="und"&&before,
          say: status==="say"?date:"", sayBefore: status==="say"&&before};
     }
-    saveWord(w);
+    if(inRec.blob){
+      try{ await audioDB.put(w.id, inRec.blob); w.hasAudio=true; }
+      catch(err){ toast("녹음을 저장하지 못했어요. 저장 공간을 확인해 주세요."); }
+    }
+    saveWord(w); inRec.reset(false);
     toast(exist ? "‘"+word+"’ 기록을 업데이트했어요" : "‘"+word+"’ 기록했어요");
     $("inWord").value=""; $("inPron").value="";
     if(inCat){ inCat=""; $("inCat").value=""; }
@@ -473,18 +597,26 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     $("edUnd").value=w.und||""; $("edSay").value=w.say||"";
     $("edUndBefore").checked=!!w.undBefore; $("edSayBefore").checked=!!w.sayBefore;
     $("edCat").value=w.cat||"";
-    $("sheet").hidden=false; $("edWord").focus();
+    edRec.reset(w.hasAudio);
+    $("sheet").hidden=false;
   }
-  function closeEdit(){ $("sheet").hidden=true; editingId=null; }
+  const edRec=makeRecorder("ed");
+  function closeEdit(){ edRec.reset(false); player.pause(); $("sheet").hidden=true; editingId=null; }
   $("edCancel").onclick=closeEdit;
   $("sheet").addEventListener("click",e=>{ if(e.target.id==="sheet") closeEdit(); });
-  $("editForm").addEventListener("submit", e=>{
+  $("editForm").addEventListener("submit", async e=>{
     e.preventDefault();
+    if(edRec.busy){ toast("녹음을 먼저 멈춰 주세요"); return; }
     const und=$("edUnd").value, say=$("edSay").value;
     if(!und && !say){ toast("날짜를 하나 이상 넣어주세요"); return; }
     const w={id:editingId, word:$("edWord").value.trim().replace(/\s+/g," "), pron:$("edPron").value.trim(), cat:$("edCat").value,
       und, undBefore: !!und && $("edUndBefore").checked, say, sayBefore: !!say && $("edSayBefore").checked};
     if(!w.word) return;
+    const prev=words.find(x=>x.id===editingId); w.hasAudio=!!(prev&&prev.hasAudio);
+    try{
+      if(edRec.blob){ await audioDB.put(w.id, edRec.blob); w.hasAudio=true; }
+      else if(edRec.removed){ await audioDB.del(w.id); w.hasAudio=false; }
+    }catch(err){ toast("녹음을 저장하지 못했어요"); }
     saveWord(w); closeEdit(); toast("저장했어요");
   });
   $("edDelete").onclick=()=>{
@@ -508,8 +640,15 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   });
 
   // ---------- backup ----------
-  $("exportBtn").addEventListener("click",()=>{
-    const blob=new Blob([JSON.stringify({app:"baby-words",version:1,exported:today(),child,words},null,2)],{type:"application/json"});
+  const toB64=b=>new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(",")[1]); r.onerror=rej; r.readAsDataURL(b); });
+  const fromB64=(s,type)=>{ const bin=atob(s); const a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i); return new Blob([a],{type}); };
+  $("exportBtn").addEventListener("click", async ()=>{
+    const audio={};
+    if($("bkAudio").checked){
+      for(const w of words.filter(x=>x.hasAudio)){ try{ const b=await audioDB.get(w.id); if(b) audio[w.id]={type:b.type,b64:await toB64(b)}; }catch(e){} }
+    }
+    const blob=new Blob([JSON.stringify({app:"baby-words",version:2,exported:today(),child,words,audio})],{type:"application/json"});
+    lsSet("first-words-lastBackup", today()); renderBanners();
     const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="말수첩-백업-"+today()+".json";
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   });
@@ -519,7 +658,12 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       const j=JSON.parse(await f.text());
       if(!Array.isArray(j.words)) throw 0;
       const byWord=new Map(words.map(w=>[w.word,w]));
-      for(const w of j.words){ if(w && w.word && !byWord.has(w.word)) byWord.set(w.word,{...w,id:w.id||newId()}); }
+      for(const w of j.words){
+        if(!(w && w.word) || byWord.has(w.word)) continue;
+        const nw={...w,id:w.id||newId()}; const a=j.audio && j.audio[w.id];
+        if(a){ try{ await audioDB.put(nw.id, fromB64(a.b64,a.type)); nw.hasAudio=true; }catch(e){ nw.hasAudio=false; } } else nw.hasAudio=false;
+        byWord.set(w.word,nw);
+      }
       words=[...byWord.values()];
       if(j.child && !child.name && !child.birth) child=j.child;
       lsSave(); render(); toast("불러왔어요 (겹치는 단어는 기존 기록 유지)");
@@ -528,6 +672,20 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   });
 
   document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeEdit(); $("childSheet").hidden=true; } });
+
+  // ---------- install hint ----------
+  (function(){
+    const standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone===true;
+    const ua=navigator.userAgent||""; const ios=/iPhone|iPad|iPod/.test(ua) || (ua.includes("Mac") && "ontouchend" in document);
+    const mobile = ios || /Android/.test(ua);
+    if(standalone || !mobile || lsGet("first-words-installHint")==="off") return;
+    $("installText").innerHTML = ios
+      ? "<b>홈 화면에 추가</b>해서 앱처럼 쓰세요. 사파리 아래쪽 공유 버튼 → ‘홈 화면에 추가’. 이렇게 쓰면 오래 안 열어도 기록이 자동으로 지워지지 않아요."
+      : "<b>홈 화면에 추가</b>해서 앱처럼 쓰세요. 브라우저 메뉴(⋮) → ‘홈 화면에 추가’ 또는 ‘앱 설치’.";
+    $("installBanner").hidden=false;
+    $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); };
+  })();
+  $("backupGo").onclick=()=>{ tab("sum"); setTimeout(()=>$("backupActions").scrollIntoView({behavior:"smooth",block:"center"}),50); };
 
   render();
 })();
