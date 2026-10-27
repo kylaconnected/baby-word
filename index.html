@@ -79,6 +79,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6}
 input[type=date]:disabled{opacity:.5}
 select{-webkit-appearance:none;appearance:none;padding-right:30px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat}
 .row>*{min-width:0}
+.row.solo{grid-template-columns:1fr}
 .row .check{align-self:end;height:42px}
 #inWord{font-size:17px}
 input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--btn);outline-offset:2px}
@@ -98,7 +99,8 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .danger{border:1.5px solid var(--danger);color:var(--danger);background:none;border-radius:999px;padding:11px 16px;cursor:pointer}
 
 .add{gap:10px;padding:16px}
-.addtitle{font-family:var(--hand);font-size:1.15rem;line-height:1.3;color:var(--ink)}
+.addtitle{gap:6px}
+.addtitle>span{font-size:1.15rem;line-height:1.3;color:var(--ink)}
 .add .row{gap:8px}
 .badge{font-size:.8rem;background:var(--field);color:var(--ink);border-radius:999px;padding:1px 9px}
 
@@ -192,18 +194,20 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     <div class="banner" id="installBanner" hidden><p id="installText"></p><button type="button" id="installClose">닫기</button></div>
     <div class="banner" id="backupBanner" hidden><p id="backupText"></p><button type="button" class="go" id="backupGo">백업하기</button></div>
     <form class="panel add" id="addForm" autocomplete="off">
-      <label for="inWord" class="addtitle">오늘 들은 말</label>
-      <input type="text" id="inWord" placeholder="예: 자동차, 엄마 줘" maxlength="40" required aria-label="단어">
       <div class="seg" role="group" aria-label="상태">
         <button type="button" id="stSay" aria-pressed="true">말했어요</button>
         <button type="button" id="stUnd" aria-pressed="false">알아들어요</button>
       </div>
+      <label class="addtitle">
+        <span id="inWordLabel">아기가 한 말</span>
+        <input type="text" id="inWord" placeholder="들린 그대로 · 예: 빠방, 엄마 저" maxlength="40" required>
+      </label>
       <div class="row">
+        <label id="meanWrap">뜻 (선택)
+          <input type="text" id="inPron" placeholder="예: 자동차" maxlength="40">
+        </label>
         <label>분류 (선택)
           <select id="inCat"></select>
-        </label>
-        <label>아기 발음 (선택)
-          <input type="text" id="inPron" placeholder="예: 빠방" maxlength="40">
         </label>
       </div>
       <div class="row">
@@ -280,8 +284,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
 <div class="sheet" id="sheet" hidden>
   <form class="panel" id="editForm" autocomplete="off">
     <h2 id="sheetTitle">단어 수정</h2>
-    <label>단어 <input type="text" id="edWord" maxlength="40" required></label>
-    <label>아기 발음 <input type="text" id="edPron" maxlength="40"></label>
+    <label>아기가 한 말 <input type="text" id="edPron" maxlength="40" placeholder="예: 빠방"></label>
+    <label>뜻 (어른 말) <input type="text" id="edWord" maxlength="40" required placeholder="예: 자동차"></label>
     <label>분류 <select id="edCat"></select></label>
     <div class="rec">
       <button type="button" class="recbtn" id="edRecBtn"><span class="dot"></span><span>목소리 녹음</span></button>
@@ -469,8 +473,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       const d = w.say ? w.say : w.und, before = w.say ? w.sayBefore : w.undBefore;
       b.innerHTML =
         (w.hasAudio? '<button type="button" class="play" aria-label="'+esc(w.word)+' 녹음 듣기"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>' : '')+
-        '<span class="word"><span>'+esc(w.word)+'</span></span>'+
-        (w.pron? '<span class="pron">“'+esc(w.pron)+'”</span>' : '')+
+        '<span class="word"><span>'+esc(w.say && w.pron ? w.pron : w.word)+'</span></span>'+
+        (w.say && w.pron ? '<span class="pron">뜻: '+esc(w.word)+'</span>' : (w.pron ? '<span class="pron">“'+esc(w.pron)+'”</span>' : ''))+
         '<span class="foot">'+
           (w.say ? '<span class="st say">말함</span>' : '<span class="st und">알아들음</span>')+
           '<span class="date num">'+fmtShort(d)+(before?' 이전부터':'')+'</span>'+
@@ -535,7 +539,13 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   // ---------- add ----------
   $("inDate").value = today();
   $("inDate").addEventListener("change", updateBadge);
-  function setStatus(s){ status=s; $("stSay").setAttribute("aria-pressed", s==="say"); $("stUnd").setAttribute("aria-pressed", s==="und"); }
+  function setStatus(s){
+    status=s; $("stSay").setAttribute("aria-pressed", s==="say"); $("stUnd").setAttribute("aria-pressed", s==="und");
+    const say=s==="say";
+    $("inWordLabel").textContent = say ? "아기가 한 말" : "알아들은 말";
+    $("inWord").placeholder = say ? "들린 그대로 · 예: 빠방, 엄마 저" : "예: 자동차, 까까 줄까?";
+    $("meanWrap").hidden = !say; $("meanWrap").parentElement.classList.toggle("solo", !say);
+  }
   $("stSay").onclick=()=>setStatus("say"); $("stUnd").onclick=()=>setStatus("und");
   $("inBefore").addEventListener("change", e=>{
     const on=e.target.checked;
@@ -547,8 +557,11 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   $("addForm").addEventListener("submit", async e=>{
     e.preventDefault();
     if(inRec.busy){ toast("녹음을 먼저 멈춰 주세요"); return; }
-    const word=$("inWord").value.trim().replace(/\s+/g," "); if(!word) return;
-    const pron=$("inPron").value.trim();
+    const said=$("inWord").value.trim().replace(/\s+/g," "); if(!said) return;
+    const mean=status==="say" ? $("inPron").value.trim().replace(/\s+/g," ") : "";
+    // word = 뜻(어른 말, 목록·요약 기준), pron = 아기가 실제로 한 소리
+    const word = mean || said;
+    const pron = (status==="say" && mean && mean!==said) ? said : "";
     const before=$("inBefore").checked;
     const date= before ? today() : ($("inDate").value||today());
     const exist=words.find(w=>w.word===word);
@@ -609,7 +622,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     if(edRec.busy){ toast("녹음을 먼저 멈춰 주세요"); return; }
     const und=$("edUnd").value, say=$("edSay").value;
     if(!und && !say){ toast("날짜를 하나 이상 넣어주세요"); return; }
-    const w={id:editingId, word:$("edWord").value.trim().replace(/\s+/g," "), pron:$("edPron").value.trim(), cat:$("edCat").value,
+    const w={id:editingId, word:$("edWord").value.trim().replace(/\s+/g," "), pron:(()=>{ const v=$("edPron").value.trim(); return v===$("edWord").value.trim() ? "" : v; })(), cat:$("edCat").value,
       und, undBefore: !!und && $("edUndBefore").checked, say, sayBefore: !!say && $("edSayBefore").checked};
     if(!w.word) return;
     const prev=words.find(x=>x.id===editingId); w.hasAudio=!!(prev&&prev.hasAudio);
