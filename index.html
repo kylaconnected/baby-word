@@ -9,7 +9,7 @@
 <title>우리 아기 말 수첩</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hi+Melody&family=Gowun+Dodum&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Dodum&display=swap">
 <style>
 /* Layout: white paper, black ink, black pill buttons; colour only comes from four crayons (blue, red, yellow, green), the way a doodle journal looks */
 :root{
@@ -18,7 +18,7 @@
   --k-blue:#2F5DB8; --k-red:#E5432D; --k-yellow:#F6C431; --k-green:#2F7D4F; --danger:#D23B26;
   --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);
   --crayon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' seed='4'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='4'/%3E%3C/filter%3E%3Cpath d='M3 13 C30 9 80 10 117 11 L116 19 C80 18 35 18 4 21 Z' fill='%237FA6EC' fill-opacity='.55' filter='url(%23c)'/%3E%3C/svg%3E");
-  --hand:"Hi Melody","Gowun Dodum",cursive;
+  --hand:"Nanum Pen Script","Gowun Dodum",cursive;
   --font:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -36,60 +36,57 @@
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.6}
 [hidden]{display:none!important}
-.wrap{max-width:600px;margin:0 auto;padding-block:28px 56px;
+.wrap{max-width:600px;margin:0 auto;padding-block:18px 56px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
-  display:flex;flex-direction:column;gap:20px}
+  display:flex;flex-direction:column;gap:16px}
 h1,h2,h3{font-family:var(--hand);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.02em}
-h1{font-size:2.6rem;line-height:1.1}
-h2{font-size:2rem;line-height:1.15}
-h3{font-size:1.55rem}
+h1{font-size:2.5rem;line-height:1}
+h2{font-size:2.1rem;line-height:1.15}
+h3{font-size:1.7rem}
 .muted{color:var(--muted)}
 .small{font-size:.9rem}
 .num{font-variant-numeric:tabular-nums}
-header{display:flex;flex-direction:column;gap:4px}
-.mark{display:flex;gap:5px;margin-bottom:6px}
-.mark i{width:16px;height:16px;border-radius:52% 48% 55% 45%/50% 55% 45% 50%;display:block}
+header{display:flex;flex-direction:column;gap:2px}
+.mark{display:flex;gap:4px;margin-bottom:4px}
+.mark i{width:12px;height:12px;border-radius:52% 48% 55% 45%/50% 55% 45% 50%;display:block}
 .mark i:nth-child(1){background:var(--k-blue);transform:rotate(-8deg)}
 .mark i:nth-child(2){background:var(--k-red);transform:rotate(12deg)}
 .mark i:nth-child(3){background:var(--k-yellow);transform:rotate(-4deg)}
 .mark i:nth-child(4){background:var(--k-green);transform:rotate(9deg)}
 .child{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px}
-.age{font-family:var(--hand);font-size:1.5rem;color:var(--btn)}
+.age{font-family:var(--hand);font-size:1.6rem;color:var(--btn)}
 button,input,select{font:inherit;color:inherit}
 .linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.9rem;align-self:flex-start}
 
 .tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--field);border-radius:999px;padding:4px;gap:4px}
-.tabs button{border:0;background:none;padding:10px;border-radius:999px;cursor:pointer;font-size:1.02rem;color:var(--muted)}
+.tabs button{border:0;background:none;padding:8px;border-radius:999px;cursor:pointer;font-size:1.02rem;color:var(--muted)}
 .tabs button[aria-selected="true"]{background:var(--btn);color:var(--btn-ink)}
 
 .panel{background:var(--paper);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow);border:1px solid var(--line)}
-label,.field{display:flex;flex-direction:column;gap:6px;font-size:.92rem;color:var(--muted);min-width:0}
-input[type=text],input[type=date],select{width:100%;border:1.5px solid transparent;background:var(--field);border-radius:14px;padding:12px 14px;font-size:18px;min-width:0}
+label,.field{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted);min-width:0}
+input[type=text],input[type=date],select{width:100%;border:1.5px solid transparent;background:var(--field);border-radius:12px;padding:9px 12px;font-size:16px;min-width:0;height:42px}
 input[type=text]:focus,input[type=date]:focus,select:focus{border-color:var(--btn);outline:none}
 input[type=date]:disabled{opacity:.5}
-#inWord{font-size:22px;padding:15px 16px}
+#inWord{font-size:17px}
 input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--btn);outline-offset:2px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.seg button{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:11px;cursor:pointer;font-size:1.02rem;color:var(--muted)}
+.seg button{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:7px;cursor:pointer;font-size:1.02rem;color:var(--muted)}
 .seg button[aria-pressed="true"]{border-color:var(--btn);background:var(--btn-soft);color:var(--btn)}
-.cats{display:flex;flex-wrap:wrap;gap:8px}
-.cats button{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 13px 6px 10px;cursor:pointer;font-size:.93rem;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
-.cats button::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c,var(--muted))}
+.cats{display:flex;flex-wrap:wrap;gap:6px}
+.cats button{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 10px 3px 8px;cursor:pointer;font-size:.85rem;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+.cats button::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c,var(--muted))}
 .cats button[aria-pressed="true"]{background:var(--btn);border-color:var(--btn);color:var(--btn-ink)}
-.check{flex-direction:row;align-items:center;gap:10px;font-size:1rem;color:var(--ink);cursor:pointer}
-.check input{width:22px;height:22px;accent-color:var(--btn);margin:0;flex:none}
-.primary{border:0;background:var(--btn);color:var(--btn-ink);border-radius:999px;padding:15px;font-size:1.12rem;cursor:pointer;line-height:1.2}
+.check{flex-direction:row;align-items:center;gap:8px;font-size:.93rem;color:var(--ink);cursor:pointer}
+.check input{width:19px;height:19px;accent-color:var(--btn);margin:0;flex:none}
+.primary{border:0;background:var(--btn);color:var(--btn-ink);border-radius:999px;padding:12px;font-size:1.05rem;cursor:pointer;line-height:1.2}
 .primary:active{transform:translateY(1px)}
 .ghost{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:11px 16px;cursor:pointer;color:var(--ink)}
 .danger{border:1.5px solid var(--danger);color:var(--danger);background:none;border-radius:999px;padding:11px 16px;cursor:pointer}
 
-details.more{border-top:1px solid var(--line);padding-top:12px}
-details.more summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.95rem}
-details.more summary::-webkit-details-marker{display:none}
-details.more summary::before{content:"+";display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--field);color:var(--ink)}
-details.more[open] summary::before{content:"−"}
-details.more .inner{display:flex;flex-direction:column;gap:14px;padding-top:14px}
+.add{gap:10px;padding:16px}
+.addtitle{font-family:var(--hand);font-size:1.9rem;line-height:1;color:var(--ink)}
+.add .row{gap:8px}
 .badge{font-size:.8rem;background:var(--field);color:var(--ink);border-radius:999px;padding:1px 9px}
 
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -99,10 +96,10 @@ details.more .inner{display:flex;flex-direction:column;gap:14px;padding-top:14px
 .filters .count{margin-left:auto;font-size:1.05rem;color:var(--muted)}
 
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:8px}
-.group{grid-column:1/-1;font-family:var(--hand);font-size:1.45rem;color:var(--muted);padding-top:12px}
+.group{grid-column:1/-1;font-family:var(--hand);font-size:1.6rem;color:var(--muted);padding-top:12px}
 .card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:16px 14px 12px;cursor:pointer;min-width:0;box-shadow:var(--shadow);color:var(--ink)}
 .card:hover{border-color:var(--btn)}
-.card .word{font-family:var(--hand);font-size:2.2rem;line-height:1.1;overflow-wrap:anywhere;max-width:100%;letter-spacing:-.02em}
+.card .word{font-family:var(--hand);font-size:2.4rem;line-height:1.1;overflow-wrap:anywhere;max-width:100%;letter-spacing:-.02em}
 .card.say .word span{background:var(--crayon) no-repeat 0 100%/100% 75%;padding:0 4px}
 .card .pron{font-size:.92rem;color:var(--muted);overflow-wrap:anywhere;max-width:100%}
 .card .foot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:6px}
@@ -114,7 +111,7 @@ details.more .inner{display:flex;flex-direction:column;gap:14px;padding-top:14px
 .tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,var(--muted))}
 
 .empty{grid-column:1/-1;padding:32px 12px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;border:1.5px dashed var(--line);border-radius:24px}
-.empty .big{font-family:var(--hand);font-size:1.8rem}
+.empty .big{font-family:var(--hand);font-size:2rem}
 
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .stat{background:var(--field);border-radius:18px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
@@ -134,7 +131,7 @@ details.more .inner{display:flex;flex-direction:column;gap:14px;padding-top:14px
 .actions .primary{flex:1}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--btn);color:var(--btn-ink);padding:11px 18px;border-radius:999px;font-size:.95rem;z-index:30;max-width:calc(100% - 32px);text-align:center}
 pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding:14px;font-family:var(--font);font-size:.93rem;margin:0;overflow-x:auto}
-@media (max-width:380px){.cards{grid-template-columns:1fr 1fr}.card .word{font-size:1.9rem}.stat b{font-size:2.6rem}}
+@media (max-width:380px){.cards{grid-template-columns:1fr 1fr}.card .word{font-size:2.1rem}.stat b{font-size:2.8rem}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -151,38 +148,30 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
 
   <div class="tabs" role="tablist">
     <button role="tab" id="tabLog" aria-selected="true" type="button">기록</button>
-    <button role="tab" id="tabSum" aria-selected="false" type="button">검진용 요약</button>
+    <button role="tab" id="tabSum" aria-selected="false" type="button">요약</button>
   </div>
 
   <!-- 기록 -->
   <section id="viewLog" style="display:flex;flex-direction:column;gap:18px">
-    <form class="panel" id="addForm" autocomplete="off">
-      <label for="inWord" style="font-family:var(--hand);font-size:1.7rem;line-height:1.1;color:var(--ink)">오늘 들은 말</label>
+    <form class="panel add" id="addForm" autocomplete="off">
+      <label for="inWord" class="addtitle">오늘 들은 말</label>
       <input type="text" id="inWord" placeholder="예: 자동차, 엄마 줘" maxlength="40" required aria-label="단어">
       <div class="seg" role="group" aria-label="상태">
         <button type="button" id="stSay" aria-pressed="true">말했어요</button>
         <button type="button" id="stUnd" aria-pressed="false">알아들어요</button>
       </div>
+      <div class="cats" id="inCats" role="group" aria-label="분류 (선택)"></div>
+      <div class="row">
+        <label>아기 발음 (선택)
+          <input type="text" id="inPron" placeholder="예: 빠방" maxlength="40">
+        </label>
+        <label>날짜
+          <input type="date" id="inDate" required>
+        </label>
+      </div>
+      <label class="check"><input type="checkbox" id="inBefore"> 이미 하던 말 (처음 날짜 모름)</label>
+      <p class="small muted" style="margin:0" id="addHint" hidden>체크가 유지되니 이미 하는 말을 연달아 입력하세요.</p>
       <button class="primary" type="submit">기록하기</button>
-
-      <details class="more" id="more">
-        <summary><span>분류·발음·날짜 더 적기</span> <span class="badge" id="moreBadge" hidden></span></summary>
-        <div class="inner">
-          <div class="field">분류
-            <div class="cats" id="inCats"></div>
-          </div>
-          <div class="row">
-            <label>아기 발음
-              <input type="text" id="inPron" placeholder="예: 빠방" maxlength="40">
-            </label>
-            <label>날짜
-              <input type="date" id="inDate" required>
-            </label>
-          </div>
-          <label class="check"><input type="checkbox" id="inBefore"> 이미 하던 말이에요 (처음 날짜 모름)</label>
-          <p class="small muted" style="margin:0" id="addHint">두 단어를 붙여 말했다면 띄어서 그대로 적어주세요. (예: 엄마 줘)</p>
-        </div>
-      </details>
     </form>
 
     <div>
@@ -327,13 +316,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   $("catFilter").innerHTML = '<option value="">모든 분류</option>'+CATS.map(c=>'<option>'+c+'</option>').join("")+'<option value="__none">분류 없음</option>';
   $("catFilter").onchange = e => { catFilter=e.target.value; render(); };
 
-  function updateBadge(){
-    const bits=[];
-    if(inCat) bits.push(inCat);
-    if($("inBefore").checked) bits.push("이미 하던 말");
-    else if($("inDate").value && $("inDate").value!==today()) bits.push(fmtShort($("inDate").value));
-    $("moreBadge").textContent=bits.join(" · "); $("moreBadge").hidden=!bits.length;
-  }
+  function updateBadge(){}
 
   function render(){
     $("childName").textContent = child.name ? child.name+"의 말 수첩" : "우리 아기 말 수첩";
@@ -347,7 +330,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     $("listCount").textContent = shown.length+"개";
     const list=$("list"); list.innerHTML="";
     if(!words.length){
-      list.innerHTML = '<div class="empty"><div class="big">첫 단어를 기다리는 중</div><div class="small muted">처음이라면 ‘더 적기’에서 ‘이미 하던 말’에 체크하고, 지금 하는 말부터 한꺼번에 적어두세요.</div></div>';
+      list.innerHTML = '<div class="empty"><div class="big">첫 단어를 기다리는 중</div><div class="small muted">처음이라면 ‘이미 하던 말’에 체크하고, 지금 하는 말부터 한꺼번에 적어두세요.</div></div>';
       return renderSummary();
     }
     if(!shown.length){ list.innerHTML='<div class="empty small muted">이 조건에 맞는 단어가 없어요.</div>'; return renderSummary(); }
@@ -411,8 +394,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   $("inBefore").addEventListener("change", e=>{
     const on=e.target.checked;
     $("inDate").value = today(); $("inDate").disabled = on;
-    $("addHint").textContent = on ? "체크가 유지되니 이미 하는 말을 연달아 입력하세요. 오늘 날짜에 ‘이전부터’로 남아요."
-                                   : "두 단어를 붙여 말했다면 띄어서 그대로 적어주세요. (예: 엄마 줘)";
+    $("addHint").hidden = !on;
     updateBadge();
   });
   $("addForm").addEventListener("submit", e=>{
