@@ -41,7 +41,7 @@
   --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;word-break:keep-all;overflow-wrap:break-word;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.6}
+body{margin:0;overflow-x:hidden;word-break:keep-all;overflow-wrap:break-word;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.6}
 [hidden]{display:none!important}
 .wrap{max-width:600px;margin:0 auto;padding-block:12px 56px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
@@ -180,6 +180,9 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--btn);color:var(--btn-ink);padding:11px 18px;border-radius:999px;font-size:.95rem;z-index:30;max-width:calc(100% - 32px);text-align:center}
 pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding:14px;font-family:var(--font);font-size:.93rem;margin:0;overflow-x:auto}
 @media (max-width:380px){.cards{grid-template-columns:1fr 1fr}.card .word{font-size:1.3rem}.stat b{font-size:1.9rem}}
+@keyframes inR{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes inL{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.in-r{animation:inR .22s ease-out}.in-l{animation:inL .22s ease-out}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -600,14 +603,37 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     filter=b.dataset.f; document.querySelectorAll(".filters button").forEach(x=>x.setAttribute("aria-pressed", x===b)); render();
   }));
   const TABS={log:["tabLog","viewLog"],list:["tabList","viewList"],sum:["tabSum","viewSum"]};
-  function tab(which){
+  const ORDER=["log","list","sum"]; let cur="log";
+  function tab(which, dir){
     for(const [k,[t,v]] of Object.entries(TABS)){
-      const on=k===which; $(t).setAttribute("aria-selected",on); $(v).hidden=!on; if(on) $(v).style.display="flex";
+      const on=k===which; $(t).setAttribute("aria-selected",on); $(v).hidden=!on;
+      if(on){ $(v).style.display="flex"; $(v).classList.remove("in-l","in-r"); if(dir){ void $(v).offsetWidth; $(v).classList.add(dir>0?"in-r":"in-l"); } }
     }
-    window.scrollTo(0,0);
+    cur=which; window.scrollTo(0,0);
   }
-  $("tabLog").onclick=()=>tab("log"); $("tabList").onclick=()=>tab("list"); $("tabSum").onclick=()=>tab("sum");
-  $("recent").onclick=()=>tab("list");
+  // ---------- swipe between tabs ----------
+  (function(){
+    let x0=null,y0=0,t0=0;
+    const area=document.querySelector(".wrap");
+    area.addEventListener("touchstart",e=>{
+      if(e.touches.length!==1 || !$("sheet").hidden || !$("childSheet").hidden){ x0=null; return; }
+      const t=e.touches[0], w=window.innerWidth;
+      if(t.clientX<24 || t.clientX>w-24){ x0=null; return; }          // 화면 가장자리는 브라우저 뒤로가기 제스처에 양보
+      if(e.target.closest("input,select,textarea,.filters,.cats")){ x0=null; return; }
+      x0=t.clientX; y0=t.clientY; t0=Date.now();
+    },{passive:true});
+    area.addEventListener("touchend",e=>{
+      if(x0===null) return;
+      const t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0; x0=null;
+      if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.5 || Date.now()-t0>800) return;
+      const i=ORDER.indexOf(cur)+(dx<0?1:-1);
+      if(i<0 || i>=ORDER.length) return;
+      if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      tab(ORDER[i], dx<0?1:-1);
+    },{passive:true});
+  })();
+  $("tabLog").onclick=()=>tab("log",ORDER.indexOf(cur)>0?-1:0); $("tabList").onclick=()=>tab("list",cur==="log"?1:cur==="sum"?-1:0); $("tabSum").onclick=()=>tab("sum",cur==="sum"?0:1);
+  $("recent").onclick=()=>tab("list",1);
   if(location.hash==="#summary") tab("sum"); else if(location.hash==="#list") tab("list");
 
   // ---------- edit ----------
