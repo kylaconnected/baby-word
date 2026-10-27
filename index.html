@@ -4,101 +4,129 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="아기가 말하거나 알아들은 단어를 날짜와 함께 기록하고, 영유아검진 문진용 요약을 보여주는 기록장">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<meta name="theme-color" content="#FFF4EA">
 <title>우리 아기 말 수첩</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap">
 <style>
-/* Layout: one narrow notebook column; header with child + age, tabs (기록 / 검진용 요약), word list as dated entries */
+/* Layout: one narrow notebook column on warm paper; quick-add card up top, words pile up as crayon cards below */
 :root{
-  --bg:#F3F5F4; --paper:#FFFFFF; --ink:#1C2422; --muted:#5E6B67; --line:#DCE3E0;
-  --accent:#0E6E68; --accent-ink:#FFFFFF; --hl:#FFE27A; --hl-ink:#3A2F00; --danger:#B42318;
-  --display:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
-  --body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --bg:#FFF4EA; --paper:#FFFDF9; --ink:#3B2A22; --muted:#8A6F62; --line:#F0DDCF;
+  --coral:#F2785C; --coral-ink:#FFFFFF; --coral-soft:#FDE3DA;
+  --crayon:#FFD45C; --crayon-ink:#4A3600; --leaf:#7DB88F; --danger:#C2412D;
+  --shadow:0 2px 0 #F0DDCF;
+  --display:"Gaegu","Gowun Dodum","Apple SD Gothic Neo",sans-serif;
+  --body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#121816; --paper:#1A2220; --ink:#E6ECEA; --muted:#9AA8A4; --line:#2C3835;
-  --accent:#4FC2B9; --accent-ink:#0C1513; --hl:#6B5A12; --hl-ink:#FFF3C4; --danger:#F97066; color-scheme:dark}}
+  --bg:#211915; --paper:#2C221D; --ink:#F6E9DF; --muted:#BFA597; --line:#45362E;
+  --coral:#FF8E73; --coral-ink:#2A120B; --coral-soft:#4A2C23;
+  --crayon:#C9A43A; --crayon-ink:#231A00; --leaf:#8FCB9F; --danger:#FF8A75;
+  --shadow:0 2px 0 #17110E; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#121816; --paper:#1A2220; --ink:#E6ECEA; --muted:#9AA8A4; --line:#2C3835;
-  --accent:#4FC2B9; --accent-ink:#0C1513; --hl:#6B5A12; --hl-ink:#FFF3C4; --danger:#F97066; color-scheme:dark}
+  --bg:#211915; --paper:#2C221D; --ink:#F6E9DF; --muted:#BFA597; --line:#45362E;
+  --coral:#FF8E73; --coral-ink:#2A120B; --coral-soft:#4A2C23;
+  --crayon:#C9A43A; --crayon-ink:#231A00; --leaf:#8FCB9F; --danger:#FF8A75;
+  --shadow:0 2px 0 #17110E; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
-.wrap{max-width:560px;margin:0 auto;padding-block:20px 48px;
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6}
+[hidden]{display:none!important}
+.wrap{max-width:600px;margin:0 auto;padding-block:24px 56px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
-  display:flex;flex-direction:column;gap:16px}
-h1,h2{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
-h1{font-size:1.6rem;line-height:1.2}
-h2{font-size:1.15rem}
+  display:flex;flex-direction:column;gap:18px}
+h1,h2{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:2.3rem;line-height:1.1}
+h2{font-size:1.6rem;line-height:1.2}
+h3{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:0}
 .muted{color:var(--muted)}
-.small{font-size:.82rem}
+.small{font-size:.9rem}
 .num{font-variant-numeric:tabular-nums}
-header{display:flex;flex-direction:column;gap:4px}
-.child{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px}
-.age{font-size:.9rem;color:var(--accent);font-weight:500}
+header{display:flex;flex-direction:column;gap:2px}
+.child{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.age{font-family:var(--display);font-size:1.35rem;color:var(--coral);font-weight:700}
 button,input,select{font:inherit;color:inherit}
-.linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.82rem;align-self:flex-start}
-.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
-.tabs button{border:0;background:none;padding:10px;border-radius:9px;cursor:pointer;font-weight:500;color:var(--muted)}
-.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
-.panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
-label,.field{display:flex;flex-direction:column;gap:4px;font-size:.82rem;color:var(--muted);min-width:0}
-input[type=text],input[type=date],select{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;font-size:16px;min-width:0}
-input[type=date]:disabled{opacity:.45}
-input:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.92rem;align-self:flex-start}
+
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:5px;gap:4px}
+.tabs button{border:0;background:none;padding:10px;border-radius:999px;cursor:pointer;font-family:var(--display);font-size:1.3rem;font-weight:700;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--coral);color:var(--coral-ink)}
+
+.panel{background:var(--paper);border:2px solid var(--line);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+label,.field{display:flex;flex-direction:column;gap:6px;font-size:.95rem;color:var(--muted);min-width:0}
+input[type=text],input[type=date],select{width:100%;border:2px solid var(--line);background:var(--bg);border-radius:16px;padding:12px 14px;font-size:18px;min-width:0}
+input[type=date]:disabled{opacity:.5}
+#inWord{font-size:22px;padding:14px 16px;font-family:var(--body)}
+input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.seg button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px;cursor:pointer}
-.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--paper);color:var(--accent);font-weight:700}
-.cats{display:flex;flex-wrap:wrap;gap:6px}
-.cats button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:5px 11px;cursor:pointer;font-size:.85rem;color:var(--ink)}
-.cats button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.check{flex-direction:row;align-items:center;gap:8px;font-size:.88rem;color:var(--ink);cursor:pointer}
-.check input{width:18px;height:18px;accent-color:var(--accent);margin:0}
-.primary{border:0;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:12px;font-weight:700;cursor:pointer}
-.ghost{border:1px solid var(--line);background:none;border-radius:10px;padding:10px 12px;cursor:pointer}
-.danger{border:1px solid var(--danger);color:var(--danger);background:none;border-radius:10px;padding:10px 12px;cursor:pointer}
-.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.filters button{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.85rem}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{border:2px solid var(--line);background:var(--bg);border-radius:16px;padding:12px;cursor:pointer;font-size:1.05rem}
+.seg button[aria-pressed="true"]{border-color:var(--coral);background:var(--coral-soft);color:var(--ink);font-weight:700}
+.cats{display:flex;flex-wrap:wrap;gap:8px}
+.cats button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.95rem;color:var(--ink)}
+.cats button[aria-pressed="true"]{background:var(--crayon);border-color:var(--crayon);color:var(--crayon-ink)}
+.check{flex-direction:row;align-items:center;gap:10px;font-size:1rem;color:var(--ink);cursor:pointer}
+.check input{width:22px;height:22px;accent-color:var(--coral);margin:0;flex:none}
+.primary{border:0;background:var(--coral);color:var(--coral-ink);border-radius:16px;padding:14px;font-family:var(--display);font-size:1.5rem;font-weight:700;cursor:pointer;line-height:1.2}
+.primary:active{transform:translateY(1px)}
+.ghost{border:2px solid var(--line);background:var(--paper);border-radius:16px;padding:11px 14px;cursor:pointer;color:var(--ink)}
+.danger{border:2px solid var(--danger);color:var(--danger);background:none;border-radius:16px;padding:11px 14px;cursor:pointer}
+
+details.more{border-top:2px dashed var(--line);padding-top:12px}
+details.more summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.98rem}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"+";display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--coral-soft);color:var(--coral);font-weight:700}
+details.more[open] summary::before{content:"−"}
+details.more .inner{display:flex;flex-direction:column;gap:14px;padding-top:14px}
+.badge{font-size:.82rem;background:var(--crayon);color:var(--crayon-ink);border-radius:999px;padding:1px 9px}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters button{border:2px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:.95rem}
 .filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.filters select{width:auto;padding:5px 10px;font-size:.85rem;border-radius:999px;background:var(--paper)}
-.filters .count{margin-left:auto}
-.list{display:flex;flex-direction:column}
-.month{font-size:.78rem;letter-spacing:.06em;color:var(--muted);padding:14px 2px 6px;border-bottom:1px solid var(--line)}
-.entry{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;text-align:left;width:100%}
-.entry:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
-.word{font-family:var(--display);font-size:1.15rem;min-width:0;overflow-wrap:anywhere}
-.word mark{background:linear-gradient(transparent 45%,var(--hl) 45%);color:inherit;padding:0 2px}
-.meta{font-size:.8rem;color:var(--muted);grid-column:1;min-width:0;overflow-wrap:anywhere}
-.tag{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-right:6px;font-size:.74rem}
-.chip{font-size:.75rem;border-radius:999px;padding:2px 9px;white-space:nowrap;grid-row:1/span 2;grid-column:2;justify-self:end;text-align:right;line-height:1.5}
-.chip.say{background:var(--hl);color:var(--hl-ink)}
-.chip.und{border:1px solid var(--line);color:var(--muted)}
-.chip small{display:block;font-size:.7rem;opacity:.8}
-.empty{padding:28px 8px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
-.empty .big{font-family:var(--display);font-size:1.3rem}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{border:1px solid var(--line);border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;gap:2px}
-.stat b{font-family:var(--display);font-weight:400;font-size:1.8rem;line-height:1.1}
-.stat span{font-size:.76rem;color:var(--muted)}
-.wordcloud{display:flex;flex-wrap:wrap;gap:6px}
-.wordcloud span{border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:.92rem}
-.catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px}
-.catgrid div{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:4px 2px;font-size:.88rem}
-.note{font-size:.82rem;color:var(--muted);border-left:3px solid var(--line);padding:4px 0 4px 10px}
-.sheet{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 40%,transparent);display:flex;align-items:flex-end;justify-content:center;z-index:20;
+.filters select{width:auto;padding:7px 12px;font-size:.95rem;border-radius:999px;background:var(--paper)}
+.filters .count{margin-left:auto;font-family:var(--display);font-size:1.25rem;font-weight:700}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:6px}
+.group{grid-column:1/-1;font-family:var(--display);font-size:1.3rem;font-weight:700;color:var(--muted);padding-top:10px}
+.card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:var(--paper);border:2px solid var(--line);border-radius:20px;padding:14px 14px 12px;cursor:pointer;min-width:0;box-shadow:var(--shadow);color:var(--ink)}
+.card:hover{border-color:var(--coral)}
+.card .word{font-family:var(--display);font-weight:700;font-size:1.8rem;line-height:1.15;overflow-wrap:anywhere;max-width:100%}
+.card.say .word span{background:linear-gradient(transparent 58%,var(--crayon) 58%,var(--crayon) 88%,transparent 88%);padding:0 3px}
+.card .pron{font-size:.95rem;color:var(--muted);overflow-wrap:anywhere;max-width:100%}
+.card .foot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:4px}
+.st{font-size:.82rem;border-radius:999px;padding:2px 10px;font-weight:700;white-space:nowrap}
+.st.say{background:var(--coral);color:var(--coral-ink)}
+.st.und{border:2px solid var(--line);color:var(--muted);font-weight:400}
+.date{font-size:.82rem;color:var(--muted)}
+.tag{font-size:.8rem;border-radius:8px;padding:1px 8px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+
+.empty{grid-column:1/-1;padding:32px 12px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;background:var(--paper);border:2px dashed var(--line);border-radius:24px}
+.empty .big{font-family:var(--display);font-size:1.7rem;font-weight:700}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--bg);border-radius:18px;padding:14px 10px;display:flex;flex-direction:column;gap:2px;align-items:flex-start}
+.stat b{font-family:var(--display);font-weight:700;font-size:2.6rem;line-height:1;color:var(--coral)}
+.stat span{font-size:.85rem;color:var(--muted);line-height:1.35}
+.wordcloud{display:flex;flex-wrap:wrap;gap:8px}
+.wordcloud span{background:var(--bg);border-radius:12px;padding:4px 11px;font-size:1rem}
+.catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:4px 16px}
+.catgrid div{display:flex;justify-content:space-between;border-bottom:2px dotted var(--line);padding:5px 2px;font-size:1rem}
+.note{font-size:.92rem;color:var(--muted);border-left:4px solid var(--crayon);padding:4px 0 4px 12px;margin:0}
+
+.sheet{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 45%,transparent);display:flex;align-items:flex-end;justify-content:center;z-index:20;
   padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
-.sheet .panel{width:100%;max-width:560px;border-radius:16px 16px 0 0;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow-y:auto}
+.sheet .panel{width:100%;max-width:600px;border-radius:28px 28px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow-y:auto;box-shadow:none}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
-.actions .primary{flex:1}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:.88rem;z-index:30}
-.banner{font-size:.8rem;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:8px 12px}
-pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--body);font-size:.85rem;margin:0;overflow-x:auto}
+.actions .primary{flex:1;font-size:1.3rem}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:999px;font-size:.98rem;z-index:30;max-width:calc(100% - 32px);text-align:center}
+pre.copy{white-space:pre-wrap;background:var(--bg);border-radius:16px;padding:14px;font-family:var(--body);font-size:.95rem;margin:0;overflow-x:auto}
+@media (max-width:380px){.cards{grid-template-columns:1fr 1fr}.card .word{font-size:1.55rem}.stat b{font-size:2.2rem}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-
 <div class="wrap">
   <header>
     <div class="child">
@@ -108,54 +136,56 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
     <button class="linkbtn" id="editChild" type="button">아기 이름·생일 설정</button>
   </header>
 
-  <div class="banner" id="modeBanner" hidden></div>
-
   <div class="tabs" role="tablist">
     <button role="tab" id="tabLog" aria-selected="true" type="button">기록</button>
     <button role="tab" id="tabSum" aria-selected="false" type="button">검진용 요약</button>
   </div>
 
   <!-- 기록 -->
-  <section id="viewLog" style="display:flex;flex-direction:column;gap:16px">
+  <section id="viewLog" style="display:flex;flex-direction:column;gap:18px">
     <form class="panel" id="addForm" autocomplete="off">
-      <h2>새 단어</h2>
-      <label>단어 (어른 말로)
-        <input type="text" id="inWord" placeholder="예: 자동차, 엄마 줘" maxlength="40" required>
-      </label>
+      <label for="inWord" style="font-family:var(--display);font-size:1.45rem;font-weight:700;color:var(--ink)">오늘 들은 말</label>
+      <input type="text" id="inWord" placeholder="예: 자동차, 엄마 줘" maxlength="40" required aria-label="단어">
       <div class="seg" role="group" aria-label="상태">
-        <button type="button" id="stSay" aria-pressed="true">말함</button>
-        <button type="button" id="stUnd" aria-pressed="false">알아들음</button>
+        <button type="button" id="stSay" aria-pressed="true">말했어요</button>
+        <button type="button" id="stUnd" aria-pressed="false">알아들어요</button>
       </div>
-      <div class="field">분류 (선택)
-        <div class="cats" id="inCats"></div>
-      </div>
-      <div class="row">
-        <label>아기 발음 (선택)
-          <input type="text" id="inPron" placeholder="예: 빠방" maxlength="40">
-        </label>
-        <label>날짜
-          <input type="date" id="inDate" required>
-        </label>
-      </div>
-      <label class="check"><input type="checkbox" id="inBefore"> 이미 하던 말이에요 (처음 날짜 모름)</label>
       <button class="primary" type="submit">기록하기</button>
-      <p class="small muted" style="margin:0" id="addHint">두 단어를 붙여 말했다면 띄어서 그대로 적어주세요. (예: 엄마 줘)</p>
+
+      <details class="more" id="more">
+        <summary><span>분류·발음·날짜 더 적기</span> <span class="badge" id="moreBadge" hidden></span></summary>
+        <div class="inner">
+          <div class="field">분류
+            <div class="cats" id="inCats"></div>
+          </div>
+          <div class="row">
+            <label>아기 발음
+              <input type="text" id="inPron" placeholder="예: 빠방" maxlength="40">
+            </label>
+            <label>날짜
+              <input type="date" id="inDate" required>
+            </label>
+          </div>
+          <label class="check"><input type="checkbox" id="inBefore"> 이미 하던 말이에요 (처음 날짜 모름)</label>
+          <p class="small muted" style="margin:0" id="addHint">두 단어를 붙여 말했다면 띄어서 그대로 적어주세요. (예: 엄마 줘)</p>
+        </div>
+      </details>
     </form>
 
     <div>
       <div class="filters">
         <button type="button" data-f="all" aria-pressed="true">전체</button>
         <button type="button" data-f="say" aria-pressed="false">말함</button>
-        <button type="button" data-f="und" aria-pressed="false">알아들음만</button>
+        <button type="button" data-f="und" aria-pressed="false">알아듣기만</button>
         <select id="catFilter" aria-label="분류로 보기"></select>
-        <span class="count small muted num" id="listCount"></span>
+        <span class="count num" id="listCount"></span>
       </div>
-      <div class="list" id="list"></div>
+      <div class="cards" id="list"></div>
     </div>
   </section>
 
   <!-- 검진용 요약 -->
-  <section id="viewSum" hidden style="flex-direction:column;gap:16px">
+  <section id="viewSum" hidden style="flex-direction:column;gap:18px">
     <div class="panel">
       <div>
         <h2 id="sumTitle">오늘 기준 기록</h2>
@@ -166,28 +196,19 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
         <div class="stat"><b class="num" id="nUnd">0</b><span>알아듣기만</span></div>
         <div class="stat"><b class="num" id="nNew">0</b><span>최근 30일 새로 말함</span></div>
       </div>
-      <div>
-        <h2 style="font-size:1rem;margin-bottom:8px">말하는 단어</h2>
-        <div class="wordcloud" id="sayWords"></div>
-      </div>
-      <div>
-        <h2 style="font-size:1rem;margin-bottom:8px">분류별 말하는 단어 수</h2>
-        <div class="catgrid num" id="catCounts"></div>
-      </div>
-      <div>
-        <h2 style="font-size:1rem;margin-bottom:8px">두 단어 붙여 말한 예</h2>
-        <div class="wordcloud" id="phrases"></div>
-      </div>
+      <div><h3 style="margin-bottom:8px">말하는 단어</h3><div class="wordcloud" id="sayWords"></div></div>
+      <div><h3 style="margin-bottom:8px">분류별 말하는 단어 수</h3><div class="catgrid num" id="catCounts"></div></div>
+      <div><h3 style="margin-bottom:8px">두 단어 붙여 말한 예</h3><div class="wordcloud" id="phrases"></div></div>
     </div>
 
     <div class="panel">
-      <h2 style="font-size:1rem">문진표 메모용 텍스트</h2>
+      <h3>문진표 메모용 텍스트</h3>
       <pre class="copy num" id="copyText"></pre>
       <button class="ghost" type="button" id="copyBtn">텍스트 복사</button>
     </div>
 
     <div class="panel">
-      <h2 style="font-size:1rem">백업</h2>
+      <h3>백업</h3>
       <p class="small muted" style="margin:0">기록은 이 기기의 브라우저에만 저장돼요. 브라우저 데이터를 지우면 사라지니 가끔 백업 파일을 받아두세요. 다른 기기로 옮길 때도 이 파일을 불러오면 됩니다.</p>
       <div class="actions">
         <button class="ghost" type="button" id="exportBtn">백업 파일 받기</button>
@@ -208,11 +229,11 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
       <div class="cats" id="edCats"></div>
     </div>
     <div class="row">
-      <div class="field" style="gap:6px">
+      <div class="field" style="gap:8px">
         <label>알아들은 날 <input type="date" id="edUnd"></label>
         <label class="check small"><input type="checkbox" id="edUndBefore"> 이전부터</label>
       </div>
-      <div class="field" style="gap:6px">
+      <div class="field" style="gap:8px">
         <label>말한 날 <input type="date" id="edSay"></label>
         <label class="check small"><input type="checkbox" id="edSayBefore"> 이전부터</label>
       </div>
@@ -250,34 +271,16 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
   let words = [];
   let child = {name:"", birth:""};
   let filter = "all", catFilter = "", status = "say", inCat = "", edCat = "", editingId = null, delArmed = false;
-  let store = null;
   const LS = "first-words-v1";
 
   function lsLoad(){ try{ const j=JSON.parse(localStorage.getItem(LS)||"null"); if(j){ words=j.words||[]; child=j.child||child; } }catch(e){} }
-  function lsSave(){ try{ localStorage.setItem(LS, JSON.stringify({words, child})); }catch(e){} }
+  function lsSave(){ try{ localStorage.setItem(LS, JSON.stringify({words, child})); }catch(e){ toast("이 브라우저에 저장하지 못했어요. 사생활 보호 모드인지 확인해 주세요."); } }
   lsLoad();
 
-  async function saveWord(w){
-    if(store){ const {id, ...body} = w; await store.doc("words/"+id).set(body); }
-    else { const i=words.findIndex(x=>x.id===w.id); if(i<0) words.push(w); else words[i]=w; lsSave(); render(); }
-  }
-  async function removeWord(id){
-    if(store){ await store.doc("words/"+id).delete(); }
-    else { words = words.filter(x=>x.id!==id); lsSave(); render(); }
-  }
-  async function saveChild(c){
-    child = c;
-    if(store){ await store.doc("meta/child").set(c); } else { lsSave(); }
-    render();
-  }
+  function saveWord(w){ const i=words.findIndex(x=>x.id===w.id); if(i<0) words.push(w); else words[i]=w; lsSave(); render(); }
+  function removeWord(id){ words = words.filter(x=>x.id!==id); lsSave(); render(); }
+  function saveChild(c){ child=c; lsSave(); render(); }
   function newId(){ return "w"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
-
-  function showError(e){
-    const code = e && e.code;
-    toast(code==="quota_exceeded" ? "저장 공간이 가득 찼어요. 오래된 기록을 정리해 주세요."
-        : code==="invalid_argument" ? "이 페이지에 기록할 권한이 없어요. 보기 전용으로 공유된 것 같아요."
-        : "저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
-  }
 
   function ageText(birth, on){
     if(!birth) return "";
@@ -290,25 +293,32 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
     return m+"개월"+(days?" "+days+"일":"");
   }
   const fmt = s => { if(!s) return ""; const [y,m,d]=s.split("-"); return y+"."+m+"."+d; };
+  const fmtShort = s => { if(!s) return ""; const [,m,d]=s.split("-"); return (+m)+"."+(+d); };
   const latest = w => w.say || w.und || "";
   const isBefore = w => w.say ? !!w.sayBefore : !!w.undBefore;
-  const dateLabel = (date, before) => before ? fmt(date)+" 이전부터" : fmt(date);
   const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   let toastT; function toast(msg){ const t=$("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,2200); }
 
-  // category chips
-  function buildCats(el, get, set){
+  function buildCats(el, get, set, onChange){
     el.innerHTML="";
     for(const c of CATS){
       const b=document.createElement("button"); b.type="button"; b.textContent=c;
       b.setAttribute("aria-pressed", get()===c);
-      b.onclick=()=>{ set(get()===c ? "" : c); el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.textContent===get())); };
+      b.onclick=()=>{ set(get()===c ? "" : c); el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.textContent===get())); onChange&&onChange(); };
       el.appendChild(b);
     }
   }
-  buildCats($("inCats"), ()=>inCat, v=>inCat=v);
+  buildCats($("inCats"), ()=>inCat, v=>inCat=v, updateBadge);
   $("catFilter").innerHTML = '<option value="">모든 분류</option>'+CATS.map(c=>'<option>'+c+'</option>').join("")+'<option value="__none">분류 없음</option>';
   $("catFilter").onchange = e => { catFilter=e.target.value; render(); };
+
+  function updateBadge(){
+    const bits=[];
+    if(inCat) bits.push(inCat);
+    if($("inBefore").checked) bits.push("이미 하던 말");
+    else if($("inDate").value && $("inDate").value!==today()) bits.push(fmtShort($("inDate").value));
+    $("moreBadge").textContent=bits.join(" · "); $("moreBadge").hidden=!bits.length;
+  }
 
   function render(){
     $("childName").textContent = child.name ? child.name+"의 말 수첩" : "우리 아기 말 수첩";
@@ -322,21 +332,26 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
     $("listCount").textContent = shown.length+"개";
     const list=$("list"); list.innerHTML="";
     if(!words.length){
-      list.innerHTML = '<div class="empty"><div class="big">아직 기록이 없어요</div><div class="small muted">처음이라면 지금 이미 하는 말부터 ‘이미 하던 말’에 체크해서 한꺼번에 적어두세요.</div></div>';
+      list.innerHTML = '<div class="empty"><div class="big">첫 단어를 기다리는 중</div><div class="small muted">처음이라면 ‘더 적기’에서 ‘이미 하던 말’에 체크하고, 지금 하는 말부터 한꺼번에 적어두세요.</div></div>';
       return renderSummary();
     }
     if(!shown.length){ list.innerHTML='<div class="empty small muted">이 조건에 맞는 단어가 없어요.</div>'; return renderSummary(); }
     let lastGroup="";
     for(const w of shown){
       const grp = isBefore(w) ? "before" : latest(w).slice(0,7);
-      if(grp!==lastGroup){ lastGroup=grp; const h=document.createElement("div"); h.className="month num";
-        h.textContent = grp==="before" ? "기록 시작 전부터 하던 말" : grp.replace("-",". ")+"월"; list.appendChild(h); }
-      const b=document.createElement("button"); b.type="button"; b.className="entry";
-      const chip = w.say
-        ? '<span class="chip say num">말함<small>'+dateLabel(w.say,w.sayBefore)+'</small></span>'
-        : '<span class="chip und num">알아들음<small>'+dateLabel(w.und,w.undBefore)+'</small></span>';
-      const meta = (w.cat?'<span class="tag">'+esc(w.cat)+'</span>':'') + (w.pron?'아기 발음: “'+esc(w.pron)+'”':'');
-      b.innerHTML = '<span class="word">'+(w.say?'<mark>'+esc(w.word)+'</mark>':esc(w.word))+'</span>'+chip+'<span class="meta">'+meta+'</span>';
+      if(grp!==lastGroup){ lastGroup=grp; const h=document.createElement("div"); h.className="group num";
+        h.textContent = grp==="before" ? "기록 시작 전부터 하던 말" : (+grp.slice(0,4))+"년 "+(+grp.slice(5,7))+"월"; list.appendChild(h); }
+      const b=document.createElement("button"); b.type="button"; b.className="card"+(w.say?" say":"");
+      const d = w.say ? w.say : w.und, before = w.say ? w.sayBefore : w.undBefore;
+      b.innerHTML =
+        '<span class="word"><span>'+esc(w.word)+'</span></span>'+
+        (w.pron? '<span class="pron">“'+esc(w.pron)+'”</span>' : '')+
+        '<span class="foot">'+
+          (w.say ? '<span class="st say">말함</span>' : '<span class="st und">알아들음</span>')+
+          '<span class="date num">'+fmtShort(d)+(before?' 이전부터':'')+'</span>'+
+          (w.cat? '<span class="tag">'+esc(w.cat)+'</span>' : '')+
+        '</span>';
+      b.setAttribute("aria-label", w.word+" 수정");
       b.addEventListener("click",()=>openEdit(w.id));
       list.appendChild(b);
     }
@@ -355,7 +370,7 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
     $("sumTitle").textContent = (child.name||"아기")+(age?" · "+age:"");
     $("sumDate").textContent = fmt(t)+" 기준";
     $("nSay").textContent=say.length; $("nUnd").textContent=und.length; $("nNew").textContent=recent.length;
-    const cloud=(el,arr,empty)=>{ el.innerHTML = arr.length ? arr.map(w=>'<span>'+esc(w.word)+(w.pron?' <span class="muted small">('+esc(w.pron)+')</span>':'')+'</span>').join("") : '<span class="muted small" style="border:0;padding:0">'+empty+'</span>'; };
+    const cloud=(el,arr,empty)=>{ el.innerHTML = arr.length ? arr.map(w=>'<span>'+esc(w.word)+(w.pron?' <span class="muted small">('+esc(w.pron)+')</span>':'')+'</span>').join("") : '<span class="muted small" style="background:none;padding:0">'+empty+'</span>'; };
     cloud($("sayWords"), say, "아직 없음");
     cloud($("phrases"), phrases, "아직 없음");
     const counts = CATS.map(c=>[c, say.filter(w=>w.cat===c).length]).filter(x=>x[1]>0);
@@ -375,6 +390,7 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
 
   // ---------- add ----------
   $("inDate").value = today();
+  $("inDate").addEventListener("change", updateBadge);
   function setStatus(s){ status=s; $("stSay").setAttribute("aria-pressed", s==="say"); $("stUnd").setAttribute("aria-pressed", s==="und"); }
   $("stSay").onclick=()=>setStatus("say"); $("stUnd").onclick=()=>setStatus("und");
   $("inBefore").addEventListener("change", e=>{
@@ -382,8 +398,9 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
     $("inDate").value = today(); $("inDate").disabled = on;
     $("addHint").textContent = on ? "체크가 유지되니 이미 하는 말을 연달아 입력하세요. 오늘 날짜에 ‘이전부터’로 남아요."
                                    : "두 단어를 붙여 말했다면 띄어서 그대로 적어주세요. (예: 엄마 줘)";
+    updateBadge();
   });
-  $("addForm").addEventListener("submit", async e=>{
+  $("addForm").addEventListener("submit", e=>{
     e.preventDefault();
     const word=$("inWord").value.trim().replace(/\s+/g," "); if(!word) return;
     const pron=$("inPron").value.trim();
@@ -402,9 +419,11 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
          und: status==="und"?date:"", undBefore: status==="und"&&before,
          say: status==="say"?date:"", sayBefore: status==="say"&&before};
     }
-    try{ await saveWord(w); toast(exist ? "‘"+word+"’ 기록을 업데이트했어요" : "‘"+word+"’ 기록했어요");
-      $("inWord").value=""; $("inPron").value=""; $("inWord").focus(); }
-    catch(err){ showError(err); }
+    saveWord(w);
+    toast(exist ? "‘"+word+"’ 기록을 업데이트했어요" : "‘"+word+"’ 기록했어요");
+    $("inWord").value=""; $("inPron").value="";
+    if(inCat){ inCat=""; $("inCats").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false")); updateBadge(); }
+    $("inWord").focus();
   });
 
   document.querySelectorAll(".filters button").forEach(b=>b.addEventListener("click",()=>{
@@ -431,28 +450,27 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
   function closeEdit(){ $("sheet").hidden=true; editingId=null; }
   $("edCancel").onclick=closeEdit;
   $("sheet").addEventListener("click",e=>{ if(e.target.id==="sheet") closeEdit(); });
-  $("editForm").addEventListener("submit", async e=>{
+  $("editForm").addEventListener("submit", e=>{
     e.preventDefault();
     const und=$("edUnd").value, say=$("edSay").value;
     if(!und && !say){ toast("날짜를 하나 이상 넣어주세요"); return; }
     const w={id:editingId, word:$("edWord").value.trim().replace(/\s+/g," "), pron:$("edPron").value.trim(), cat:edCat,
       und, undBefore: !!und && $("edUndBefore").checked, say, sayBefore: !!say && $("edSayBefore").checked};
     if(!w.word) return;
-    try{ await saveWord(w); closeEdit(); toast("저장했어요"); }catch(err){ showError(err); }
+    saveWord(w); closeEdit(); toast("저장했어요");
   });
-  $("edDelete").onclick=async()=>{
+  $("edDelete").onclick=()=>{
     if(!delArmed){ delArmed=true; $("edDelete").textContent="한 번 더 누르면 삭제"; return; }
-    try{ await removeWord(editingId); closeEdit(); toast("삭제했어요"); }catch(err){ showError(err); }
+    removeWord(editingId); closeEdit(); toast("삭제했어요");
   };
 
   // ---------- child ----------
   $("editChild").onclick=()=>{ $("cName").value=child.name||""; $("cBirth").value=child.birth||""; $("childSheet").hidden=false; $("cName").focus(); };
   $("cCancel").onclick=()=>$("childSheet").hidden=true;
   $("childSheet").addEventListener("click",e=>{ if(e.target.id==="childSheet") $("childSheet").hidden=true; });
-  $("childForm").addEventListener("submit", async e=>{
+  $("childForm").addEventListener("submit", e=>{
     e.preventDefault();
-    try{ await saveChild({name:$("cName").value.trim(), birth:$("cBirth").value}); $("childSheet").hidden=true; toast("저장했어요"); }
-    catch(err){ showError(err); }
+    saveChild({name:$("cName").value.trim(), birth:$("cBirth").value}); $("childSheet").hidden=true; toast("저장했어요");
   });
 
   $("copyBtn").addEventListener("click",()=>{
@@ -461,12 +479,30 @@ pre.copy{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);
     try{ navigator.clipboard.writeText(txt).then(()=>toast("복사했어요"), fallback); }catch(e){ fallback(); }
   });
 
+  // ---------- backup ----------
+  $("exportBtn").addEventListener("click",()=>{
+    const blob=new Blob([JSON.stringify({app:"baby-words",version:1,exported:today(),child,words},null,2)],{type:"application/json"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="말수첩-백업-"+today()+".json";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  });
+  $("importFile").addEventListener("change", async e=>{
+    const f=e.target.files[0]; if(!f) return;
+    try{
+      const j=JSON.parse(await f.text());
+      if(!Array.isArray(j.words)) throw 0;
+      const byWord=new Map(words.map(w=>[w.word,w]));
+      for(const w of j.words){ if(w && w.word && !byWord.has(w.word)) byWord.set(w.word,{...w,id:w.id||newId()}); }
+      words=[...byWord.values()];
+      if(j.child && !child.name && !child.birth) child=j.child;
+      lsSave(); render(); toast("불러왔어요 (겹치는 단어는 기존 기록 유지)");
+    }catch(err){ toast("백업 파일을 읽지 못했어요. 이 앱에서 받은 .json 파일인지 확인해 주세요."); }
+    e.target.value="";
+  });
+
   document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeEdit(); $("childSheet").hidden=true; } });
 
   render();
-
 })();
 </script>
-
 </body>
 </html>
