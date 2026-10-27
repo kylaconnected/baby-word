@@ -43,24 +43,25 @@
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.6}
 [hidden]{display:none!important}
-.wrap{max-width:600px;margin:0 auto;padding-block:18px 56px;
+.wrap{max-width:600px;margin:0 auto;padding-block:12px 56px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
-  display:flex;flex-direction:column;gap:16px}
+  display:flex;flex-direction:column;gap:12px}
 h1,h2,h3{font-family:var(--hand);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.02em}
-h1{font-size:1.75rem;line-height:1.2}
+h1{font-size:1.45rem;line-height:1.25}
 h2{font-size:1.4rem;line-height:1.15}
 h3{font-size:1.08rem}
 .muted{color:var(--muted)}
 .small{font-size:.9rem}
 .num{font-variant-numeric:tabular-nums}
 header{display:flex;flex-direction:column;gap:2px}
-.mark{display:flex;gap:4px;margin-bottom:4px}
-.mark i{width:12px;height:12px;border-radius:52% 48% 55% 45%/50% 55% 45% 50%;display:block}
+.mark{display:flex;gap:3px;align-self:center;flex:none}
+.mark i{width:10px;height:10px;border-radius:52% 48% 55% 45%/50% 55% 45% 50%;display:block}
 .mark i:nth-child(1){background:var(--k-blue);transform:rotate(-8deg)}
 .mark i:nth-child(2){background:var(--k-red);transform:rotate(12deg)}
 .mark i:nth-child(3){background:var(--k-yellow);transform:rotate(-4deg)}
 .mark i:nth-child(4){background:var(--k-green);transform:rotate(9deg)}
-.child{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px}
+.child{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
+.child .linkbtn{margin-left:auto;font-size:.8rem}
 .age{font-family:var(--hand);font-size:1rem;color:var(--btn)}
 button,input,select{font:inherit;color:inherit}
 .linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.9rem;align-self:flex-start}
@@ -98,7 +99,11 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .ghost{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:11px 16px;cursor:pointer;color:var(--ink)}
 .danger{border:1.5px solid var(--danger);color:var(--danger);background:none;border-radius:999px;padding:11px 16px;cursor:pointer}
 
-.add{gap:10px;padding:16px}
+.add{gap:8px;padding:14px}
+.submitrow{display:flex;gap:8px;align-items:stretch}
+.submitrow .primary{flex:1}
+.submitrow .recbtn{flex:none}
+.rec:empty{display:none}
 .addtitle{gap:6px}
 .addtitle>span{font-size:1.15rem;line-height:1.3;color:var(--ink)}
 .add .row{gap:8px}
@@ -123,12 +128,12 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .card .play{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:0;background:var(--btn-soft);color:var(--btn);display:grid;place-items:center;cursor:pointer;padding:0}
 .card .play svg{width:14px;height:14px;fill:currentColor}
 .card.has-audio .word{padding-right:34px}
-.notice{font-size:.82rem;color:var(--muted);margin:0;padding:0 6px;display:flex;gap:6px;align-items:flex-start}
-.notice svg{width:13px;height:13px;flex:none;margin-top:3px;fill:none;stroke:currentColor;stroke-width:2}
-.banner{background:var(--btn-soft);border-radius:16px;padding:12px 14px;font-size:.9rem;display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.notice{font-size:.76rem;color:var(--muted);margin:0;padding:0 6px;display:flex;gap:6px;align-items:flex-start}
+.notice svg{width:12px;height:12px;flex:none;margin-top:2px;fill:none;stroke:currentColor;stroke-width:2}
+.banner{background:var(--btn-soft);border-radius:12px;padding:7px 10px 7px 12px;font-size:.78rem;display:flex;gap:8px;align-items:center;line-height:1.45}
 .banner p{margin:0;flex:1;min-width:0}
 .banner b{font-weight:400;color:var(--btn)}
-.banner button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:2px 4px;white-space:nowrap}
+.banner button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.78rem;padding:2px 4px;white-space:nowrap}
 .banner button.go{color:var(--btn);text-decoration:underline;text-underline-offset:3px}
 .listmeta{display:flex;justify-content:flex-end;font-size:.88rem;color:var(--muted);padding:6px 4px 0}
 
@@ -175,12 +180,12 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
 <body>
 <div class="wrap">
   <header>
-    <div class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <div class="child">
+      <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
       <h1 id="childName">우리 아기 말 수첩</h1>
       <span class="age num" id="childAge"></span>
+      <button class="linkbtn" id="editChild" type="button">아기 이름·생일 설정</button>
     </div>
-    <button class="linkbtn" id="editChild" type="button">아기 이름·생일 설정</button>
   </header>
 
   <div class="tabs" role="tablist">
@@ -190,7 +195,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   </div>
 
   <!-- 기록 -->
-  <section id="viewLog" style="display:flex;flex-direction:column;gap:14px">
+  <section id="viewLog" style="display:flex;flex-direction:column;gap:10px">
     <div class="banner" id="installBanner" hidden><p id="installText"></p><button type="button" id="installClose">닫기</button></div>
     <div class="banner" id="backupBanner" hidden><p id="backupText"></p><button type="button" class="go" id="backupGo">백업하기</button></div>
     <form class="panel add" id="addForm" autocomplete="off">
@@ -216,17 +221,19 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
         </label>
         <label class="check"><input type="checkbox" id="inBefore"> 이미 하던 말</label>
       </div>
-      <div class="rec" id="inRec">
-        <button type="button" class="recbtn" id="inRecBtn"><span class="dot"></span><span>목소리 녹음</span></button>
+      <p class="small muted" style="margin:0" id="addHint" hidden>체크가 유지되니 이미 하는 말을 연달아 입력하세요.</p>
+      <div class="rec" id="inRecLine" hidden>
+        <span class="small muted num" id="inRecInfo"></span>
         <button type="button" class="mini" id="inRecPlay" hidden>듣기</button>
         <button type="button" class="mini" id="inRecDel" hidden>지우기</button>
-        <span class="small muted num" id="inRecInfo"></span>
       </div>
-      <p class="small muted" style="margin:0" id="addHint" hidden>체크가 유지되니 이미 하는 말을 연달아 입력하세요.</p>
-      <button class="primary" type="submit">기록하기</button>
+      <div class="submitrow">
+        <button type="button" class="recbtn" id="inRecBtn" aria-label="목소리 녹음"><span class="dot"></span><span>녹음</span></button>
+        <button class="primary" type="submit">기록하기</button>
+      </div>
     </form>
     <button type="button" class="recent" id="recent" hidden></button>
-    <p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>기록과 녹음은 이 기기에만 저장되고, 서버나 다른 곳으로 전송되지 않아요. 로그인도 필요 없어요.</span></p>
+    <p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>기록·녹음은 이 기기에만 저장돼요 (서버 전송·로그인 없음)</span></p>
   </section>
 
   <!-- 목록 -->
@@ -393,14 +400,16 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   const canRec=!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
   const MAX_SEC=10;
   function pickMime(){ for(const t of ["audio/mp4","audio/webm;codecs=opus","audio/webm"]){ try{ if(MediaRecorder.isTypeSupported(t)) return t; }catch(e){} } return ""; }
-  function makeRecorder(pre){
+  function makeRecorder(pre, short){
+    const line=$(pre+"RecLine");
     const btn=$(pre+"RecBtn"), play=$(pre+"RecPlay"), del=$(pre+"RecDel"), info=$(pre+"RecInfo"), label=btn.lastElementChild;
     const st={blob:null, existing:false, removed:false, mr:null, stream:null, timer:null, t0:0};
     function ui(){
       const recording=!!st.mr;
       btn.classList.toggle("on",recording);
       const has=!!st.blob || (st.existing && !st.removed);
-      label.textContent = recording ? "녹음 중 · 탭하면 멈춤" : (has ? "다시 녹음" : "목소리 녹음");
+      label.textContent = short ? (recording ? "멈춤" : (has ? "다시" : "녹음")) : (recording ? "녹음 중 · 탭하면 멈춤" : (has ? "다시 녹음" : "목소리 녹음"));
+      if(line) line.hidden = !recording && !has;
       play.hidden = recording || !has; del.hidden = recording || !has;
       if(!recording) info.textContent = st.blob ? "새 녹음 "+st.sec+"초" : "";
     }
@@ -424,7 +433,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     btn.onclick=()=>{ st.mr ? stop() : start(); };
     play.onclick=()=>{ st.blob ? playBlob(st.blob) : (editingId && playWord(editingId)); };
     del.onclick=()=>{ st.blob=null; if(st.existing) st.removed=true; ui(); };
-    if(!canRec) btn.parentElement.hidden=true;
+    if(!canRec){ btn.hidden=true; if(!short) btn.parentElement.hidden=true; }
     return {
       reset(existing){ stop(); st.blob=null; st.existing=!!existing; st.removed=false; ui(); },
       get blob(){ return st.blob; }, get removed(){ return st.removed; }, get busy(){ return !!st.mr; }
@@ -552,7 +561,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     $("addHint").hidden = !on;
     updateBadge();
   });
-  const inRec=makeRecorder("in");
+  const inRec=makeRecorder("in", true);
   $("addForm").addEventListener("submit", async e=>{
     e.preventDefault();
     if(inRec.busy){ toast("녹음을 먼저 멈춰 주세요"); return; }
@@ -692,8 +701,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     const mobile = ios || /Android/.test(ua);
     if(standalone || !mobile || lsGet("first-words-installHint")==="off") return;
     $("installText").innerHTML = ios
-      ? "<b>홈 화면에 추가</b>해서 앱처럼 쓰세요. 사파리 아래쪽 공유 버튼 → ‘홈 화면에 추가’. 이렇게 쓰면 오래 안 열어도 기록이 자동으로 지워지지 않아요."
-      : "<b>홈 화면에 추가</b>해서 앱처럼 쓰세요. 브라우저 메뉴(⋮) → ‘홈 화면에 추가’ 또는 ‘앱 설치’.";
+      ? "공유 → <b>‘홈 화면에 추가’</b>로 앱처럼 쓰면 기록이 자동 삭제되지 않아요."
+      : "메뉴(⋮) → <b>‘홈 화면에 추가’</b>로 앱처럼 쓰면 기록이 더 안전해요.";
     $("installBanner").hidden=false;
     $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); };
   })();
