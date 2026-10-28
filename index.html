@@ -170,6 +170,12 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .wordcloud span{background:var(--field);border-radius:999px;padding:4px 12px;font-size:.98rem}
 .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:4px 16px}
 .catgrid div{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:6px 2px;font-size:.98rem}
+.changelog{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.changelog li{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;padding:10px 0;border-top:1px solid var(--line)}
+.changelog li:first-child{border-top:0;padding-top:2px}
+.changelog .d{font-size:.82rem;color:var(--muted);padding-top:2px;white-space:nowrap}
+.changelog .t{font-size:.95rem;line-height:1.5}
+.changelog .fb{display:inline-block;font-size:.72rem;color:var(--btn);background:var(--btn-soft);border-radius:999px;padding:0 8px;margin-left:6px;vertical-align:1px}
 textarea{width:100%;border:1.5px solid transparent;background:var(--field);border-radius:12px;padding:10px 12px;font:inherit;font-size:16px;line-height:1.5;resize:vertical;min-height:100px;color:var(--ink)}
 textarea:focus{border-color:var(--btn);outline:none}
 .note{font-size:.9rem;color:var(--muted);margin:0;padding:0 4px}
@@ -287,6 +293,13 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
         <button class="ghost" type="button" id="exportBtn">백업 파일 받기</button>
         <label class="ghost" style="flex-direction:row;cursor:pointer;color:var(--ink);font-size:inherit">백업 불러오기<input type="file" id="importFile" accept="application/json,.json" hidden></label>
       </div>
+    </div>
+
+    <div class="panel" id="logPanel">
+      <h3>업데이트 소식</h3>
+      <p class="small muted" style="margin:0">보내주신 의견 중 반영된 내용을 여기에 알려드려요.</p>
+      <ul class="changelog" id="changelog"></ul>
+      <button type="button" class="linkbtn" id="logMore" hidden>이전 소식 더 보기</button>
     </div>
 
     <div class="panel" id="fbPanel" hidden>
@@ -781,6 +794,19 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); };
   })();
   $("backupGo").onclick=()=>{ tab("sum"); setTimeout(()=>$("backupActions").scrollIntoView({behavior:"smooth",block:"center"}),50); };
+
+  // ---------- 업데이트 소식 (반영된 내용만, 최신이 위) ----------
+  // fromFeedback: true 이면 '의견 반영' 표시
+  const CHANGELOG = [
+    {date:"2026-10-28", text:"우리 아기 말 수첩을 처음 공개했어요. 아기 말과 뜻 기록, 목소리 녹음, 검진용 요약을 쓸 수 있어요."},
+  ];
+  (function(){
+    const ul=$("changelog"), more=$("logMore"), SHOW=3;
+    const row=c=>'<li><span class="d num">'+fmtShort(c.date)+'</span><span class="t">'+esc(c.text)+(c.fromFeedback?'<span class="fb">의견 반영</span>':'')+'</span></li>';
+    const draw=all=>{ ul.innerHTML=(all?CHANGELOG:CHANGELOG.slice(0,SHOW)).map(row).join(""); more.hidden = all || CHANGELOG.length<=SHOW; };
+    more.onclick=()=>draw(true);
+    if(!CHANGELOG.length) $("logPanel").hidden=true; else draw(false);
+  })();
 
   // ---------- feedback ----------
   const FEEDBACK_URL = "";   // Google Apps Script 웹 앱 주소
