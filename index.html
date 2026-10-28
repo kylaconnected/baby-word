@@ -170,6 +170,8 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .wordcloud span{background:var(--field);border-radius:999px;padding:4px 12px;font-size:.98rem}
 .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:4px 16px}
 .catgrid div{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:6px 2px;font-size:.98rem}
+textarea{width:100%;border:1.5px solid transparent;background:var(--field);border-radius:12px;padding:10px 12px;font:inherit;font-size:16px;line-height:1.5;resize:vertical;min-height:100px;color:var(--ink)}
+textarea:focus{border-color:var(--btn);outline:none}
 .note{font-size:.9rem;color:var(--muted);margin:0;padding:0 4px}
 
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:20;
@@ -285,6 +287,19 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
         <button class="ghost" type="button" id="exportBtn">백업 파일 받기</button>
         <label class="ghost" style="flex-direction:row;cursor:pointer;color:var(--ink);font-size:inherit">백업 불러오기<input type="file" id="importFile" accept="application/json,.json" hidden></label>
       </div>
+    </div>
+
+    <div class="panel" id="fbPanel" hidden>
+      <h3>의견 보내기</h3>
+      <p class="small muted" style="margin:0">불편한 점, 있었으면 하는 기능을 편하게 남겨주세요. <b style="font-weight:400;color:var(--ink)">보내기를 누른 의견만 전송되고, 아기 기록과 녹음은 보내지 않아요.</b></p>
+      <form id="fbForm" autocomplete="off" style="display:flex;flex-direction:column;gap:10px">
+        <textarea id="fbText" rows="4" maxlength="1000" placeholder="예: 분류에 ‘놀이’가 있었으면 좋겠어요" aria-label="의견"></textarea>
+        <input type="text" id="fbHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <div class="actions" style="align-items:center">
+          <button class="primary" type="submit" id="fbSend">의견 보내기</button>
+          <span class="small muted num" id="fbCount">0 / 1000</span>
+        </div>
+      </form>
     </div>
 
     <p class="note">본 서비스는 보호자의 기록을 돕기 위한 도구로, 아동의 언어 발달을 평가하거나 진단하지 않습니다. 언어 발달에 대한 전문적인 상담은 영유아 건강검진, 소아청소년과 전문의 또는 언어재활사를 통해 받으시기를 권장드립니다.</p>
@@ -767,8 +782,36 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   })();
   $("backupGo").onclick=()=>{ tab("sum"); setTimeout(()=>$("backupActions").scrollIntoView({behavior:"smooth",block:"center"}),50); };
 
+  // ---------- feedback ----------
+  const FEEDBACK_URL = "";   // Google Apps Script 웹 앱 주소
+  if(FEEDBACK_URL){
+    $("fbPanel").hidden=false;
+    $("fbText").addEventListener("input",()=>{ $("fbCount").textContent=$("fbText").value.length+" / 1000"; });
+    $("fbForm").addEventListener("submit", async e=>{
+      e.preventDefault();
+      const msg=$("fbText").value.trim();
+      if(msg.length<2){ toast("의견을 적어주세요"); return; }
+      if($("fbHp").value) return;
+      const last=+(lsGet("first-words-fbLast")||0);
+      if(Date.now()-last<30000){ toast("잠시 후 다시 보내주세요"); return; }
+      const ua=navigator.userAgent||"";
+      const device=/iPhone|iPad/.test(ua)?"iOS":/Android/.test(ua)?"Android":"PC";
+      const standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
+      $("fbSend").disabled=true; $("fbSend").textContent="보내는 중…";
+      try{
+        await fetch(FEEDBACK_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+          body:JSON.stringify({message:msg, device, app: standalone?"홈 화면 앱":"브라우저"})});
+        lsSet("first-words-fbLast", String(Date.now()));
+        $("fbText").value=""; $("fbCount").textContent="0 / 1000";
+        toast("의견을 보냈어요. 고맙습니다!");
+      }catch(err){ toast("보내지 못했어요. 인터넷 연결을 확인해 주세요."); }
+      $("fbSend").disabled=false; $("fbSend").textContent="의견 보내기";
+    });
+  }
+
   render();
 })();
 </script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
