@@ -809,7 +809,9 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
   })();
 
   // ---------- feedback ----------
-  const FEEDBACK_URL = "";   // Google Apps Script 웹 앱 주소
+  // 의견은 구글 설문지로 제출 → 응답 시트에 쌓이고 메일 알림
+  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfBCVUGQrfiQltzDM1fv--9fAkyfPLElN6G-sj7St7d7Fh9eg/formResponse";
+  const FB_FIELDS = {message:"entry.552461988", device:"entry.616103129", app:"entry.320944670"};
   if(FEEDBACK_URL){
     $("fbPanel").hidden=false;
     $("fbText").addEventListener("input",()=>{ $("fbCount").textContent=$("fbText").value.length+" / 1000"; });
@@ -825,8 +827,9 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       const standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
       $("fbSend").disabled=true; $("fbSend").textContent="보내는 중…";
       try{
-        await fetch(FEEDBACK_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
-          body:JSON.stringify({message:msg, device, app: standalone?"홈 화면 앱":"브라우저"})});
+        const body=new URLSearchParams();
+        body.set(FB_FIELDS.message,msg); body.set(FB_FIELDS.device,device); body.set(FB_FIELDS.app, standalone?"홈 화면 앱":"브라우저");
+        await fetch(FEEDBACK_URL,{method:"POST",mode:"no-cors",body});
         lsSet("first-words-fbLast", String(Date.now()));
         $("fbText").value=""; $("fbCount").textContent="0 / 1000";
         toast("의견을 보냈어요. 고맙습니다!");
