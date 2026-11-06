@@ -186,6 +186,20 @@ textarea{width:100%;border:1.5px solid transparent;background:var(--field);borde
 textarea:focus{border-color:var(--btn);outline:none}
 .note{font-size:.9rem;color:var(--muted);margin:0;padding:0 4px}
 
+header{position:relative;padding-right:44px}
+.iconbtn{border:0;background:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--ink);padding:0}
+.iconbtn:hover{background:var(--field)}
+.iconbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gear{position:absolute;top:-2px;right:-8px}
+.settings{position:fixed;inset:0;z-index:15;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.setwrap{max-width:600px;margin:0 auto;padding-block:12px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+.sethead{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);padding:6px 0;z-index:1}
+.setrow{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:var(--field);border-radius:12px;padding:12px 14px;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+.go-arrow{font-style:normal;color:var(--muted);font-size:1.3rem;line-height:1}
+.settings .os{display:inline-block;font-size:.72rem;color:var(--btn);background:var(--btn-soft);border-radius:999px;padding:0 7px;margin-right:4px;line-height:1.6}
+.settings .ic{width:15px;height:15px;vertical-align:-3px;fill:none;stroke:var(--btn);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.settings b.em{font-weight:400;color:var(--btn)}
+body.noscroll{overflow:hidden}
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:20;
   padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
 .sheet .panel{width:100%;max-width:600px;border-radius:28px 28px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow-y:auto}
@@ -204,12 +218,12 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
 <body>
 <div class="wrap">
   <header>
+    <button type="button" class="iconbtn gear" id="openSettings" aria-label="설정"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     <div class="child">
       <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
       <h1 id="childName">우리 아기 말 수첩</h1>
       <span class="age num" id="childAge"></span>
     </div>
-    <button class="linkbtn" id="editChild" type="button">아기 이름·생일 설정</button>
   </header>
 
   <div class="tabs" role="tablist">
@@ -293,6 +307,22 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
       <button class="ghost" type="button" id="copyBtn">텍스트 복사</button>
     </div>
 
+    <p class="note">본 서비스는 보호자의 기록을 돕기 위한 도구로, 아동의 언어 발달을 평가하거나 진단하지 않습니다. 언어 발달에 대한 전문적인 상담은 영유아 건강검진, 소아청소년과 전문의 또는 언어재활사를 통해 받으시기를 권장드립니다.</p>
+  </section>
+</div>
+
+<div class="settings" id="settings" hidden role="dialog" aria-modal="true" aria-labelledby="setTitle">
+  <div class="setwrap">
+    <div class="sethead">
+      <h2 id="setTitle">설정</h2>
+      <button type="button" class="iconbtn" id="setClose" aria-label="설정 닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+
+    <div class="panel">
+      <h3>아기 정보</h3>
+      <button type="button" class="setrow" id="editChild"><span id="childInfo">이름·생일 설정</span><i class="go-arrow" aria-hidden="true">›</i></button>
+    </div>
+
     <div class="panel">
       <h3>백업</h3>
       <p class="small muted" style="margin:0">기록과 녹음은 이 기기의 브라우저에만 저장돼요. 브라우저 데이터를 지우거나 휴대폰을 바꾸면 사라지니, 2주에 한 번쯤 백업 파일을 받아 ‘파일’ 앱이나 클라우드 드라이브에 보관하세요. 다른 기기로 옮길 때도 이 파일을 불러오면 됩니다.</p>
@@ -304,11 +334,11 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
       </div>
     </div>
 
-    <div class="panel" id="logPanel">
-      <h3>업데이트 소식</h3>
-      <p class="small muted" style="margin:0">보내주신 의견 중 반영된 내용을 여기에 알려드려요.</p>
-      <ul class="changelog" id="changelog"></ul>
-      <button type="button" class="linkbtn" id="logMore" hidden>이전 소식 더 보기</button>
+    <div class="panel">
+      <h3>홈 화면에 추가</h3>
+      <p class="small muted" style="margin:0">홈 화면에 추가하면 앱처럼 쓸 수 있고, 오래 안 열어도 기록이 자동으로 지워지지 않아요.</p>
+      <p class="small" style="margin:0"><span class="os">아이폰</span> 사파리 아래쪽 공유 버튼 <svg class="ic" viewBox="0 0 24 24" aria-label="공유"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg> → <b class="em">‘홈 화면에 추가’</b></p>
+      <p class="small" style="margin:0"><span class="os">안드로이드</span> 크롬 오른쪽 위 메뉴(⋮) → <b class="em">‘홈 화면에 추가’</b> · 삼성 인터넷은 아래쪽 메뉴(≡) → ‘현재 페이지 추가’</p>
     </div>
 
     <div class="panel" id="fbPanel" hidden>
@@ -324,8 +354,19 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
       </form>
     </div>
 
-    <p class="note">본 서비스는 보호자의 기록을 돕기 위한 도구로, 아동의 언어 발달을 평가하거나 진단하지 않습니다. 언어 발달에 대한 전문적인 상담은 영유아 건강검진, 소아청소년과 전문의 또는 언어재활사를 통해 받으시기를 권장드립니다.</p>
-  </section>
+    <div class="panel" id="logPanel">
+      <h3>업데이트 소식</h3>
+      <p class="small muted" style="margin:0">보내주신 의견 중 반영된 내용을 여기에 알려드려요.</p>
+      <ul class="changelog" id="changelog"></ul>
+      <button type="button" class="linkbtn" id="logMore" hidden>이전 소식 더 보기</button>
+    </div>
+
+    <div class="panel">
+      <h3>서비스 안내</h3>
+      <p class="small muted" style="margin:0">본 서비스는 보호자의 기록을 돕기 위한 도구로, 아동의 언어 발달을 평가하거나 진단하지 않습니다. 언어 발달에 대한 전문적인 상담은 영유아 건강검진, 소아청소년과 전문의 또는 언어재활사를 통해 받으시기를 권장드립니다.</p>
+      <p class="small muted" style="margin:0">기록과 녹음은 이 기기에만 저장되고, 서버나 다른 곳으로 전송되지 않아요.</p>
+    </div>
+  </div>
 </div>
 
 <div class="sheet" id="sheet" hidden>
@@ -503,7 +544,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   function render(){
     $("childName").textContent = child.name ? child.name+"의 말 수첩" : "우리 아기 말 수첩";
     $("childAge").textContent = ageText(child.birth);
-    $("editChild").textContent = child.name ? "아기 정보 수정" : "아기 이름·생일 설정";
+    $("childInfo").textContent = child.name ? child.name+(child.birth?" · "+fmt(child.birth)+" 생":"") : "이름·생일 설정";
 
     const shown = words
       .filter(w => filter==="all" || (filter==="say" ? !!w.say : (!w.say && !!w.und)))
@@ -682,7 +723,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     }
     document.addEventListener("touchstart",e=>{
       active=false; lock=null;
-      if(e.touches.length!==1 || !$("sheet").hidden || !$("childSheet").hidden) return;
+      if(e.touches.length!==1 || !$("sheet").hidden || !$("childSheet").hidden || !$("settings").hidden) return;
       const t=e.touches[0];
       if(t.clientX<20 || t.clientX>W()-20) return;                       // 가장자리는 브라우저 뒤로가기 제스처용
       if(e.target.closest("input,select,textarea")) return;
@@ -807,7 +848,19 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     e.target.value="";
   });
 
-  document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeEdit(); $("childSheet").hidden=true; } });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(!$("childSheet").hidden){ $("childSheet").hidden=true; return; } if(!$("sheet").hidden){ closeEdit(); return; } closeSettings(); } });
+
+  // ---------- 설정 ----------
+  function openSettings(scrollTo){
+    $("settings").hidden=false; document.body.classList.add("noscroll");
+    $("settings").scrollTop=0;
+    if(scrollTo) setTimeout(()=>$(scrollTo).scrollIntoView({behavior:"smooth",block:"center"}),60);
+    else $("setClose").focus();
+  }
+  function closeSettings(){ if($("settings").hidden) return; $("settings").hidden=true; document.body.classList.remove("noscroll"); $("openSettings").focus(); }
+  $("openSettings").onclick=()=>openSettings();
+  $("setClose").onclick=closeSettings;
+  if(location.hash==="#settings") openSettings();
 
   // ---------- install hint ----------
   (function(){
@@ -828,7 +881,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     });
     $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); };
   })();
-  $("backupGo").onclick=()=>{ tab("sum"); setTimeout(()=>$("backupActions").scrollIntoView({behavior:"smooth",block:"center"}),50); };
+  $("backupGo").onclick=()=>openSettings("backupActions");
 
   // ---------- 업데이트 소식 (반영된 내용만, 최신이 위) ----------
   // fromFeedback: true 이면 '의견 반영' 표시
