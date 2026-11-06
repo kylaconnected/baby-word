@@ -134,10 +134,9 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .banner{background:var(--btn-soft);border-radius:12px;padding:7px 10px 7px 12px;font-size:.78rem;display:flex;gap:8px;align-items:center;line-height:1.45}
 .banner p{margin:0;flex:1;min-width:0}
 .banner b{font-weight:400;color:var(--btn)}
-.bubbles{position:fixed;left:0;right:0;bottom:0;z-index:12;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;
-  padding:0 max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.bubble{pointer-events:auto;position:relative;width:100%;max-width:568px;background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 28px rgba(20,30,60,.16);padding:10px 36px 10px 14px;font-size:.8rem;line-height:1.5;animation:bubIn .25s ease-out}
-.bubble::after{content:"";position:absolute;left:28px;bottom:-7px;width:12px;height:12px;background:var(--paper);border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
+.bubbles{display:flex;flex-direction:column;gap:8px;margin-top:2px}
+.bubbles:not(:has(.bubble:not([hidden]))){display:none}
+.bubble{position:relative;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 36px 10px 14px;font-size:.8rem;line-height:1.5;animation:bubIn .25s ease-out}
 .bubble p{margin:0}
 .bubble b{font-weight:400;color:var(--btn)}
 .bubble .x{position:absolute;top:6px;right:6px;width:26px;height:26px;border:0;border-radius:50%;background:var(--field);color:var(--muted);cursor:pointer;font-size:.75rem;line-height:1;padding:0}
@@ -278,6 +277,16 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     </form>
     <button type="button" class="recent" id="recent" hidden></button>
     <p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>기록과 녹음은 이 기기에만 저장되고, 서버나 다른 곳으로 전송되지 않아요. 로그인도 필요 없어요.</span></p>
+    <div class="bubbles" id="bubbles">
+      <div class="bubble" id="updateBubble" hidden role="status">
+        <p><span class="tag-b">업데이트 소식</span><span id="updateText"></span> <button type="button" class="go" id="updateMore">자세히</button></p>
+        <button type="button" class="x" id="updateClose" aria-label="업데이트 소식 닫기">✕</button>
+      </div>
+      <div class="bubble" id="installBanner" hidden role="status">
+        <p id="installText"></p>
+        <button type="button" class="x" id="installClose" aria-label="홈 화면 추가 안내 닫기">✕</button>
+      </div>
+    </div>
   </section>
 
   <!-- 목록 -->
@@ -429,16 +438,6 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   </form>
 </div>
 
-<div class="bubbles" id="bubbles">
-  <div class="bubble" id="updateBubble" hidden role="status">
-    <p><span class="tag-b">업데이트 소식</span><span id="updateText"></span> <button type="button" class="go" id="updateMore">자세히</button></p>
-    <button type="button" class="x" id="updateClose" aria-label="업데이트 소식 닫기">✕</button>
-  </div>
-  <div class="bubble" id="installBanner" hidden role="status">
-    <p id="installText"></p>
-    <button type="button" class="x" id="installClose" aria-label="홈 화면 추가 안내 닫기">✕</button>
-  </div>
-</div>
 
 <div class="toast" id="toast" hidden></div>
 
@@ -894,7 +893,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     const standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone===true;
     const ua=navigator.userAgent||""; const ios=/iPhone|iPad|iPod/.test(ua) || (ua.includes("Mac") && "ontouchend" in document);
     const mobile = ios || /Android/.test(ua);
-    if(standalone || !mobile || lsGet("first-words-installHint")==="off") return;
+    if(standalone || !mobile || lsGet("first-words-installHint2")==="off") return;
     const iosLine = "<span class=\"os\">아이폰</span> 사파리 아래쪽 공유 버튼 <svg class=\"ic\" viewBox=\"0 0 24 24\" aria-label=\"공유\"><path d=\"M12 3v12M8 7l4-4 4 4\"/><path d=\"M6 11H5v10h14V11h-1\"/></svg> → <b>‘홈 화면에 추가’</b>";
     const andLine = "<span class=\"os\">안드로이드</span> 크롬 오른쪽 위 메뉴(⋮) → <b>‘홈 화면에 추가’</b> · 삼성 인터넷은 아래쪽 메뉴(≡) → ‘현재 페이지 추가’";
     $("installText").innerHTML = "<b>홈 화면에 추가</b>하면 앱처럼 쓸 수 있고, 오래 안 열어도 기록이 지워지지 않아요."
@@ -904,9 +903,9 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     window.addEventListener("beforeinstallprompt", e=>{
       e.preventDefault(); const evt=e;
       $("installText").innerHTML = "<b>홈 화면에 앱으로 설치</b>하면 앱처럼 쓸 수 있고, 기록도 더 안전하게 보관돼요. <button type=\"button\" class=\"go\" id=\"installNow\">지금 설치</button>";
-      $("installNow").onclick=async()=>{ evt.prompt(); try{ const r=await evt.userChoice; if(r.outcome==="accepted"){ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); showUpdateBubble(); } }catch(_){} };
+      $("installNow").onclick=async()=>{ evt.prompt(); try{ const r=await evt.userChoice; if(r.outcome==="accepted"){ $("installBanner").hidden=true; lsSet("first-words-installHint2","off"); showUpdateBubble(); } }catch(_){} };
     });
-    $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); showUpdateBubble(); };
+    $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint2","off"); showUpdateBubble(); };
   })();
   $("backupGo").onclick=()=>openSettings("backupActions");
 
@@ -925,7 +924,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
 
   // ---------- 업데이트 말풍선 (새 소식이 있을 때 한 번) ----------
   function showUpdateBubble(){
-    if(!CHANGELOG.length || !$("installBanner").hidden) return;      // 홈 화면 안내가 떠 있으면 그 다음에
+    if(!CHANGELOG.length) return;
     const latest=CHANGELOG[0];
     if(lsGet("first-words-logSeen")===latest.date) return;
     $("updateText").textContent = fmtShort(latest.date)+" "+latest.text;
