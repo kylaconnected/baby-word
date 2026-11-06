@@ -526,7 +526,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   async function playWord(id){ try{ playBlob(await audioDB.get(id)); }catch(e){ toast("녹음을 불러오지 못했어요"); } }
 
   const canRec=!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
-  const MAX_SEC=10;
+  const MAX_SEC=60;   // 최대 1분 (아기 말을 기다리는 시간 포함)
   function pickMime(){ for(const t of ["audio/mp4","audio/webm;codecs=opus","audio/webm"]){ try{ if(MediaRecorder.isTypeSupported(t)) return t; }catch(e){} } return ""; }
   function makeRecorder(pre, short){
     const line=$(pre+"RecLine");
@@ -941,6 +941,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   // ---------- 업데이트 소식 (반영된 내용만, 최신이 위) ----------
   // fromFeedback: true 이면 '의견 반영' 표시
   const CHANGELOG = [
+    {date:"2026-11-07", text:"목소리 녹음을 최대 1분까지 할 수 있어요. 아기가 말할 때까지 기다리며 녹음해 두세요.", fromFeedback:true},
     {date:"2026-11-07", text:"설정이 새로워졌어요. 오른쪽 위 톱니바퀴에서 홈 화면 추가, 아기 정보, 백업, 의견 보내기를 한곳에서 찾을 수 있어요."},
     {date:"2026-11-07", text:"요약 탭의 숫자를 누르면 말하는 단어, 알아듣기만 하는 단어, 최근 30일 새로 말한 단어가 펼쳐져요."},
     {date:"2026-11-06", text:"단어마다 메모를 남길 수 있어요. 목록에서 단어 카드를 누르면 메모 칸이 있어요."},
