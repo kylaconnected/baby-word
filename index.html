@@ -163,7 +163,12 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .empty .big{font-family:var(--hand);font-size:1.2rem}
 
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.stat{background:var(--field);border-radius:18px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.stat{background:var(--field);border:1.5px solid transparent;border-radius:18px;padding:14px 12px 10px;display:flex;flex-direction:column;gap:4px;align-items:flex-start;text-align:left;cursor:pointer;font:inherit;color:inherit;position:relative}
+.stat[aria-expanded="true"]{border-color:var(--btn);background:var(--btn-soft)}
+.stat .chev{width:7px;height:7px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg);margin-top:2px;align-self:center;transition:transform .15s}
+.stat[aria-expanded="true"] .chev{transform:rotate(-135deg);margin-top:6px;border-color:var(--btn)}
+.statlist{background:var(--field);border-radius:16px;padding:14px;margin-top:-4px}
+.statlist .wordcloud span{background:var(--paper)}
 .stat b{font-family:var(--hand);font-weight:400;font-size:2.1rem;line-height:1;letter-spacing:-.03em}
 .stat:nth-child(1) b{color:var(--btn)}.stat:nth-child(2) b{color:var(--k-green)}.stat:nth-child(3) b{color:var(--k-red)}
 .stat span{font-size:.83rem;color:var(--muted);line-height:1.35}
@@ -271,15 +276,15 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
         <p class="small muted num" id="sumDate" style="margin:2px 0 0"></p>
       </div>
       <div class="stats">
-        <div class="stat"><b class="num" id="nSay">0</b><span>말하는 단어</span></div>
-        <div class="stat"><b class="num" id="nUnd">0</b><span>알아듣기만</span></div>
-        <div class="stat"><b class="num" id="nNew">0</b><span>최근 30일 새로 말함</span></div>
+        <button type="button" class="stat" data-set="say" aria-expanded="false"><b class="num" id="nSay">0</b><span>말하는 단어</span><i class="chev" aria-hidden="true"></i></button>
+        <button type="button" class="stat" data-set="und" aria-expanded="false"><b class="num" id="nUnd">0</b><span>알아듣기만</span><i class="chev" aria-hidden="true"></i></button>
+        <button type="button" class="stat" data-set="new" aria-expanded="false"><b class="num" id="nNew">0</b><span>최근 30일 새로 말함</span><i class="chev" aria-hidden="true"></i></button>
       </div>
-      <div><h3 style="margin-bottom:8px">최근 말하기 시작한 단어</h3><div class="wordcloud" id="sayWords"></div>
-        <button type="button" class="morelink" id="sayMore" hidden></button></div>
+      <p class="small muted" id="statHint" style="margin:-4px 0 0">숫자를 누르면 단어가 펼쳐져요.</p>
+      <div class="statlist" id="statList" hidden><h3 id="statTitle" style="margin-bottom:8px"></h3><div class="wordcloud" id="statWords"></div></div>
       <div><h3 style="margin-bottom:8px">분류별 말하는 단어 수</h3><div class="catgrid num" id="catCounts"></div></div>
       <div><h3 style="margin-bottom:8px">두 단어 붙여 말한 예</h3><div class="wordcloud" id="phrases"></div>
-        <button type="button" class="morelink" id="phrMore" hidden></button></div>
+</div>
     </div>
 
     <div class="panel">
@@ -553,6 +558,16 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     if(need) $("backupText").innerHTML = days===null ? "단어가 <b>"+words.length+"개</b> 쌓였어요. 기기에만 저장되니 백업 파일을 한 번 받아두세요." : "마지막 백업 후 <b>"+days+"일</b>이 지났어요.";
   }
 
+  let statSets={}, statOpen="";
+  function drawStat(){
+    document.querySelectorAll(".stat[data-set]").forEach(b=>b.setAttribute("aria-expanded", b.dataset.set===statOpen));
+    const box=$("statList");
+    if(!statOpen || !statSets[statOpen]){ box.hidden=true; return; }
+    const st=statSets[statOpen]; box.hidden=false; $("statTitle").textContent=st.title;
+    $("statWords").innerHTML = st.list.length ? st.list.map(w=>'<span>'+esc(w.word)+(w.pron?' <span class="muted small">('+esc(w.pron)+')</span>':'')+'</span>').join("") : '<span class="muted small" style="background:none;padding:0">아직 없음</span>';
+  }
+  document.querySelectorAll(".stat[data-set]").forEach(b=>b.addEventListener("click",()=>{ statOpen = statOpen===b.dataset.set ? "" : b.dataset.set; drawStat(); }));
+
   function renderSummary(){
     renderRecent(); renderBanners();
     const t=today();
@@ -567,13 +582,15 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     $("sumDate").textContent = fmt(t)+" 기준";
     $("nSay").textContent=say.length; $("nUnd").textContent=und.length; $("nNew").textContent=recent.length;
     const cloud=(el,arr,empty)=>{ el.innerHTML = arr.length ? arr.map(w=>'<span>'+esc(w.word)+(w.pron?' <span class="muted small">('+esc(w.pron)+')</span>':'')+'</span>').join("") : '<span class="muted small" style="background:none;padding:0">'+empty+'</span>'; };
-    // 단어가 많아져도 화면이 길어지지 않도록 최근 것만 보여주고, 전체는 목록 탭으로
-    const SAY_MAX=12, PHR_MAX=6;
-    const byRecent=a=>[...a].sort((x,y)=>(x.sayBefore-y.sayBefore)||y.say.localeCompare(x.say));
-    cloud($("sayWords"), byRecent(say).slice(0,SAY_MAX), "아직 없음");
-    cloud($("phrases"), byRecent(phrases).slice(0,PHR_MAX), "아직 없음");
-    $("sayMore").hidden = say.length<=SAY_MAX; $("sayMore").textContent = "말하는 단어 전체 "+say.length+"개 보기 →";
-    $("phrMore").hidden = phrases.length<=PHR_MAX; $("phrMore").textContent = "두 단어 전체 "+phrases.length+"개 보기 →";
+    // 숫자 상자를 누르면 해당 단어가 펼쳐짐 (한 번에 하나, 날짜순)
+    const byDate=(a,k)=>[...a].sort((x,y)=>((y[k+"Before"]?1:0)-(x[k+"Before"]?1:0))||x[k].localeCompare(y[k]));
+    statSets = {
+      say:{title:"말하는 단어 "+say.length+"개", list:byDate(say,"say")},
+      und:{title:"알아듣기만 하는 단어 "+und.length+"개", list:byDate(und,"und")},
+      new:{title:"최근 30일 새로 말한 단어 "+recent.length+"개", list:byDate(recent,"say")},
+    };
+    drawStat();
+    cloud($("phrases"), phrases, "아직 없음");
     const counts = CATS.map(c=>[c, say.filter(w=>w.cat===c).length]).filter(x=>x[1]>0);
     const none = say.filter(w=>!w.cat).length; if(none) counts.push(["분류 없음", none]);
     $("catCounts").innerHTML = counts.length ? counts.map(([c,n])=>'<div><span>'+c+'</span><span>'+n+'</span></div>').join("") : '<span class="muted small">아직 없음</span>';
@@ -703,7 +720,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   $("recent").onclick=()=>tab("list",1);
   function showList(f){ filter=f; catFilter=""; $("catFilter").value=""; $("catFilter").classList.remove("on");
     document.querySelectorAll(".filters button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.f===f)); render(); tab("list",-1); }
-  $("sayMore").onclick=()=>showList("say"); $("phrMore").onclick=()=>showList("say");
+
   if(location.hash==="#summary") tab("sum"); else if(location.hash==="#list") tab("list");
 
   // ---------- edit ----------
