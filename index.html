@@ -964,11 +964,11 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   function showUpdateBubble(){
     if(!CHANGELOG.length) return;
     const latest=CHANGELOG[0];
-    if(lsGet("first-words-logSeen")===latest.date) return;
+    if(lsGet("first-words-logSeen")===latest.date+"|"+latest.text) return;
     $("updateText").textContent = fmtShort(latest.date)+" "+latest.text;
     $("updateBubble").hidden=false;
   }
-  function closeUpdate(){ $("updateBubble").hidden=true; if(CHANGELOG.length) lsSet("first-words-logSeen", CHANGELOG[0].date); }
+  function closeUpdate(){ $("updateBubble").hidden=true; if(CHANGELOG.length) lsSet("first-words-logSeen", CHANGELOG[0].date+"|"+CHANGELOG[0].text); }
   $("updateClose").onclick=closeUpdate;
   $("updateMore").onclick=()=>{ closeUpdate(); openSettings("updates"); };
   showUpdateBubble();
