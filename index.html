@@ -150,6 +150,7 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .card .word{font-family:var(--hand);font-size:1.45rem;line-height:1.25;overflow-wrap:anywhere;max-width:100%;letter-spacing:-.02em}
 .card.say .word span{background:var(--crayon) no-repeat 0 100%/100% 75%;padding:0 4px}
 .card .pron{font-size:.92rem;color:var(--muted);overflow-wrap:anywhere;max-width:100%}
+.card .memo{font-size:.8rem;color:var(--muted);line-height:1.45;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;border-left:2px solid var(--line);padding-left:7px;margin-top:2px}
 .card .foot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:6px}
 .st{font-size:.78rem;border-radius:999px;padding:2px 9px;white-space:nowrap}
 .st.say{background:var(--btn);color:var(--btn-ink)}
@@ -342,6 +343,9 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
       </div>
     </div>
     <p class="small muted" style="margin:0">‘이전부터’에 체크하면 날짜는 “이때 이미 하고 있었음”이라는 뜻이 돼요.</p>
+    <label>메모 (선택)
+      <textarea id="edMemo" rows="3" maxlength="500" placeholder="예: 창밖 버스 보면서 처음 말함, 할머니가 알려준 말"></textarea>
+    </label>
     <div class="actions">
       <button class="primary" type="submit">저장</button>
       <button class="ghost" type="button" id="edCancel">닫기</button>
@@ -515,6 +519,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
         (w.hasAudio? '<button type="button" class="play" aria-label="'+esc(w.word)+' 녹음 듣기"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>' : '')+
         '<span class="word"><span>'+esc(w.pron || w.word)+'</span></span>'+
         (w.pron ? '<span class="pron">뜻: '+esc(w.word)+'</span>' : '')+
+        (w.memo ? '<span class="memo">'+esc(w.memo)+'</span>' : '')+
         '<span class="foot">'+
           (w.say ? '<span class="st say">말함</span>' : '<span class="st und">알아들음</span>')+
           '<span class="date num">'+fmtShort(d)+(before?' 이전부터':'')+'</span>'+
@@ -698,6 +703,7 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     $("edUnd").value=w.und||""; $("edSay").value=w.say||"";
     $("edUndBefore").checked=!!w.undBefore; $("edSayBefore").checked=!!w.sayBefore;
     $("edCat").value=w.cat||"";
+    $("edMemo").value=w.memo||"";
     edRec.reset(w.hasAudio);
     $("sheet").hidden=false;
   }
@@ -711,7 +717,8 @@ pre.copy{white-space:pre-wrap;background:var(--field);border-radius:16px;padding
     const und=$("edUnd").value, say=$("edSay").value;
     if(!und && !say){ toast("날짜를 하나 이상 넣어주세요"); return; }
     const w={id:editingId, word:$("edWord").value.trim().replace(/\s+/g," "), pron:(()=>{ const v=$("edPron").value.trim(); return v===$("edWord").value.trim() ? "" : v; })(), cat:$("edCat").value,
-      und, undBefore: !!und && $("edUndBefore").checked, say, sayBefore: !!say && $("edSayBefore").checked};
+      und, undBefore: !!und && $("edUndBefore").checked, say, sayBefore: !!say && $("edSayBefore").checked,
+      memo: $("edMemo").value.trim()};
     if(!w.word) return;
     const prev=words.find(x=>x.id===editingId); w.hasAudio=!!(prev&&prev.hasAudio);
     try{
