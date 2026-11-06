@@ -288,6 +288,9 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     <button type="button" class="recent" id="recent" hidden></button>
     <p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>기록과 녹음은 이 기기에만 저장되고, 서버나 다른 곳으로 전송되지 않아요. 로그인도 필요 없어요.</span></p>
     <div class="bubbles" id="bubbles">
+      <div class="bubble" id="newVerBubble" hidden role="status">
+        <p><b>새 버전이 나왔어요.</b> 기록은 그대로 두고 화면만 새로 불러와요. <button type="button" class="go" id="newVerGo">지금 새로고침</button></p>
+      </div>
       <div class="bubble" id="updateBubble" hidden role="status">
         <p><span class="tag-b">업데이트 소식</span><span id="updateText"></span> <button type="button" class="go" id="updateMore">자세히</button></p>
         <button type="button" class="x" id="updateClose" aria-label="업데이트 소식 닫기">✕</button>
@@ -968,6 +971,25 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   $("updateClose").onclick=closeUpdate;
   $("updateMore").onclick=()=>{ closeUpdate(); openSettings("updates"); };
   showUpdateBubble();
+
+  // ---------- 새 버전 자동 확인 (홈 화면 앱은 껐다 켜지 않으면 옛 화면이 남아 있음) ----------
+  (function(){
+    let base=null, pending=false;
+    const sig=async()=>{ try{ const r=await fetch("/",{cache:"no-store",method:"HEAD"}); return r.headers.get("etag")||r.headers.get("last-modified"); }catch(e){ return null; } };
+    const busy=()=> !$("sheet").hidden || !$("childSheet").hidden || $("inWord").value.trim() || ($("fbText")&&$("fbText").value.trim()) || inRec.busy;
+    function apply(){ if(busy()){ $("newVerBubble").hidden=false; return; } location.reload(); }
+    async function check(){
+      if(document.visibilityState!=="visible") return;
+      const v=await sig(); if(!v) return;
+      if(base===null){ base=v; return; }
+      if(v!==base){ pending=true; apply(); }
+    }
+    $("newVerGo").onclick=()=>location.reload();
+    sig().then(v=>{ base=v; });
+    document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") (pending?apply():check()); });
+    window.addEventListener("pageshow",e=>{ if(e.persisted) check(); });
+    setInterval(check, 30*60*1000);
+  })();
 
   // ---------- feedback ----------
   // 의견은 구글 설문지로 제출 → 응답 시트에 쌓이고 메일 알림
