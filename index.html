@@ -101,6 +101,7 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .danger{border:1.5px solid var(--danger);color:var(--danger);background:none;border-radius:999px;padding:11px 16px;cursor:pointer}
 
 .add{gap:8px;padding:14px}
+.rechint{margin:-2px 0 0;font-size:.75rem;color:var(--muted);padding-left:4px}
 .submitrow{display:flex;gap:8px;align-items:stretch}
 .submitrow .primary{flex:1}
 .submitrow .recbtn{flex:none}
@@ -284,6 +285,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
         <button type="button" class="recbtn" id="inRecBtn" aria-label="목소리 녹음"><span class="dot"></span><span>녹음</span></button>
         <button class="primary" type="submit">기록하기</button>
       </div>
+      <p class="rechint" id="recHint">녹음은 최대 1분까지 할 수 있어요.</p>
     </form>
     <button type="button" class="recent" id="recent" hidden></button>
     <p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>기록과 녹음은 이 기기에만 저장되고, 서버나 다른 곳으로 전송되지 않아요. 로그인도 필요 없어요.</span></p>
@@ -530,6 +532,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
 
   const canRec=!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
   const MAX_SEC=60;   // 최대 1분 (아기 말을 기다리는 시간 포함)
+  if(document.getElementById("recHint")) document.getElementById("recHint").textContent = "녹음은 최대 "+(MAX_SEC%60?MAX_SEC+"초":(MAX_SEC/60)+"분")+"까지 할 수 있어요.";
   function pickMime(){ for(const t of ["audio/mp4","audio/webm;codecs=opus","audio/webm"]){ try{ if(MediaRecorder.isTypeSupported(t)) return t; }catch(e){} } return ""; }
   function makeRecorder(pre, short){
     const line=$(pre+"RecLine");
@@ -564,7 +567,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     btn.onclick=()=>{ st.mr ? stop() : start(); };
     play.onclick=()=>{ st.blob ? playBlob(st.blob) : (editingId && playWord(editingId)); };
     del.onclick=()=>{ st.blob=null; if(st.existing) st.removed=true; ui(); };
-    if(!canRec){ btn.hidden=true; if(!short) btn.parentElement.hidden=true; }
+    if(!canRec){ btn.hidden=true; if(!short) btn.parentElement.hidden=true; else if($("recHint")) $("recHint").hidden=true; }
     return {
       reset(existing){ stop(); st.blob=null; st.existing=!!existing; st.removed=false; ui(); },
       get blob(){ return st.blob; }, get removed(){ return st.removed; }, get busy(){ return !!st.mr; }
