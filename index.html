@@ -134,6 +134,18 @@ input:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visi
 .banner{background:var(--btn-soft);border-radius:12px;padding:7px 10px 7px 12px;font-size:.78rem;display:flex;gap:8px;align-items:center;line-height:1.45}
 .banner p{margin:0;flex:1;min-width:0}
 .banner b{font-weight:400;color:var(--btn)}
+.bubbles{position:fixed;left:0;right:0;bottom:0;z-index:12;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;
+  padding:0 max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.bubble{pointer-events:auto;position:relative;width:100%;max-width:568px;background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 28px rgba(20,30,60,.16);padding:10px 36px 10px 14px;font-size:.8rem;line-height:1.5;animation:bubIn .25s ease-out}
+.bubble::after{content:"";position:absolute;left:28px;bottom:-7px;width:12px;height:12px;background:var(--paper);border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
+.bubble p{margin:0}
+.bubble b{font-weight:400;color:var(--btn)}
+.bubble .x{position:absolute;top:6px;right:6px;width:26px;height:26px;border:0;border-radius:50%;background:var(--field);color:var(--muted);cursor:pointer;font-size:.75rem;line-height:1;padding:0}
+.bubble .go{border:0;background:none;color:var(--btn);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.8rem;padding:0 2px}
+.bubble .os{display:inline-block;font-size:.7rem;color:var(--btn);background:var(--btn-soft);border-radius:999px;padding:0 7px;margin-right:4px;line-height:1.6}
+.bubble .ic{width:15px;height:15px;vertical-align:-3px;fill:none;stroke:var(--btn);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bubble .tag-b{display:inline-block;font-size:.7rem;color:var(--btn-ink);background:var(--btn);border-radius:999px;padding:0 8px;margin-right:6px;line-height:1.7}
+@keyframes bubIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .mini-banner{padding:6px 8px 6px 12px;font-size:.72rem;line-height:1.4;border-radius:12px}
 .mini-banner .os{display:inline-block;font-size:.68rem;color:var(--btn);background:var(--paper);border-radius:999px;padding:0 7px;margin-right:4px;line-height:1.6}
 .mini-banner .ic{width:15px;height:15px;vertical-align:-3px;fill:none;stroke:var(--btn);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -224,6 +236,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
       <h1 id="childName">우리 아기 말 수첩</h1>
       <span class="age num" id="childAge"></span>
     </div>
+    <button class="linkbtn" id="childLink" type="button">아기 이름·생일 설정</button>
   </header>
 
   <div class="tabs" role="tablist">
@@ -234,7 +247,6 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
 
   <!-- 기록 -->
   <section id="viewLog" style="display:flex;flex-direction:column;gap:8px">
-    <div class="banner mini-banner" id="installBanner" hidden><p id="installText"></p><button type="button" id="installClose" aria-label="안내 닫기">✕</button></div>
     <div class="banner" id="backupBanner" hidden><p id="backupText"></p><button type="button" class="go" id="backupGo">백업하기</button></div>
     <form class="panel add" id="addForm" autocomplete="off">
       <div class="seg" role="group" aria-label="상태">
@@ -319,6 +331,13 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     </div>
 
     <div class="panel">
+      <h3>홈 화면에 추가</h3>
+      <p class="small muted" style="margin:0">홈 화면에 추가하면 앱처럼 쓸 수 있고, 오래 안 열어도 기록이 자동으로 지워지지 않아요.</p>
+      <p class="small" style="margin:0"><span class="os">아이폰</span> 사파리 아래쪽 공유 버튼 <svg class="ic" viewBox="0 0 24 24" aria-label="공유"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg> → <b class="em">‘홈 화면에 추가’</b></p>
+      <p class="small" style="margin:0"><span class="os">안드로이드</span> 크롬 오른쪽 위 메뉴(⋮) → <b class="em">‘홈 화면에 추가’</b> · 삼성 인터넷은 아래쪽 메뉴(≡) → ‘현재 페이지 추가’</p>
+    </div>
+
+    <div class="panel">
       <h3>아기 정보</h3>
       <button type="button" class="setrow" id="editChild"><span id="childInfo">이름·생일 설정</span><i class="go-arrow" aria-hidden="true">›</i></button>
     </div>
@@ -334,12 +353,6 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
       </div>
     </div>
 
-    <div class="panel">
-      <h3>홈 화면에 추가</h3>
-      <p class="small muted" style="margin:0">홈 화면에 추가하면 앱처럼 쓸 수 있고, 오래 안 열어도 기록이 자동으로 지워지지 않아요.</p>
-      <p class="small" style="margin:0"><span class="os">아이폰</span> 사파리 아래쪽 공유 버튼 <svg class="ic" viewBox="0 0 24 24" aria-label="공유"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg> → <b class="em">‘홈 화면에 추가’</b></p>
-      <p class="small" style="margin:0"><span class="os">안드로이드</span> 크롬 오른쪽 위 메뉴(⋮) → <b class="em">‘홈 화면에 추가’</b> · 삼성 인터넷은 아래쪽 메뉴(≡) → ‘현재 페이지 추가’</p>
-    </div>
 
     <div class="panel" id="fbPanel" hidden>
       <h3>의견 보내기</h3>
@@ -414,6 +427,17 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
       <button class="ghost" type="button" id="cCancel">닫기</button>
     </div>
   </form>
+</div>
+
+<div class="bubbles" id="bubbles">
+  <div class="bubble" id="updateBubble" hidden role="status">
+    <p><span class="tag-b">업데이트 소식</span><span id="updateText"></span> <button type="button" class="go" id="updateMore">자세히</button></p>
+    <button type="button" class="x" id="updateClose" aria-label="업데이트 소식 닫기">✕</button>
+  </div>
+  <div class="bubble" id="installBanner" hidden role="status">
+    <p id="installText"></p>
+    <button type="button" class="x" id="installClose" aria-label="홈 화면 추가 안내 닫기">✕</button>
+  </div>
 </div>
 
 <div class="toast" id="toast" hidden></div>
@@ -544,6 +568,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   function render(){
     $("childName").textContent = child.name ? child.name+"의 말 수첩" : "우리 아기 말 수첩";
     $("childAge").textContent = ageText(child.birth);
+    $("childLink").textContent = child.name ? "아기 정보 수정" : "아기 이름·생일 설정";
     $("childInfo").textContent = child.name ? child.name+(child.birth?" · "+fmt(child.birth)+" 생":"") : "이름·생일 설정";
 
     const shown = words
@@ -709,6 +734,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
       if(on){ $(v).style.display="flex"; $(v).classList.remove("in-l","in-r"); if(dir){ void $(v).offsetWidth; $(v).classList.add(dir>0?"in-r":"in-l"); } }
     }
     cur=which; window.scrollTo(0,0);
+    $("childLink").hidden = which!=="log";
   }
   // ---------- swipe between tabs (화면이 손가락을 따라 움직임) ----------
   (function(){
@@ -802,6 +828,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   };
 
   // ---------- child ----------
+  $("childLink").onclick=()=>$("editChild").click();
   $("editChild").onclick=()=>{ $("cName").value=child.name||""; $("cBirth").value=child.birth||""; $("childSheet").hidden=false; $("cName").focus(); };
   $("cCancel").onclick=()=>$("childSheet").hidden=true;
   $("childSheet").addEventListener("click",e=>{ if(e.target.id==="childSheet") $("childSheet").hidden=true; });
@@ -870,16 +897,16 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     if(standalone || !mobile || lsGet("first-words-installHint")==="off") return;
     const iosLine = "<span class=\"os\">아이폰</span> 사파리 아래쪽 공유 버튼 <svg class=\"ic\" viewBox=\"0 0 24 24\" aria-label=\"공유\"><path d=\"M12 3v12M8 7l4-4 4 4\"/><path d=\"M6 11H5v10h14V11h-1\"/></svg> → <b>‘홈 화면에 추가’</b>";
     const andLine = "<span class=\"os\">안드로이드</span> 크롬 오른쪽 위 메뉴(⋮) → <b>‘홈 화면에 추가’</b> · 삼성 인터넷은 아래쪽 메뉴(≡) → ‘현재 페이지 추가’";
-    $("installText").innerHTML = "홈 화면에 추가하면 앱처럼 쓸 수 있고, 오래 안 열어도 기록이 지워지지 않아요."
-      + "<br>" + (ios ? iosLine+"<br>"+andLine : andLine+"<br>"+iosLine);
+    $("installText").innerHTML = "<b>홈 화면에 추가</b>하면 앱처럼 쓸 수 있고, 오래 안 열어도 기록이 지워지지 않아요."
+      + "<br>" + (ios ? iosLine : andLine);
     $("installBanner").hidden=false;
     // 안드로이드 크롬: 바로 설치 버튼
     window.addEventListener("beforeinstallprompt", e=>{
       e.preventDefault(); const evt=e;
       $("installText").innerHTML = "<b>홈 화면에 앱으로 설치</b>하면 앱처럼 쓸 수 있고, 기록도 더 안전하게 보관돼요. <button type=\"button\" class=\"go\" id=\"installNow\">지금 설치</button>";
-      $("installNow").onclick=async()=>{ evt.prompt(); try{ const r=await evt.userChoice; if(r.outcome==="accepted"){ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); } }catch(_){} };
+      $("installNow").onclick=async()=>{ evt.prompt(); try{ const r=await evt.userChoice; if(r.outcome==="accepted"){ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); showUpdateBubble(); } }catch(_){} };
     });
-    $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); };
+    $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint","off"); showUpdateBubble(); };
   })();
   $("backupGo").onclick=()=>openSettings("backupActions");
 
@@ -895,6 +922,19 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     more.onclick=()=>draw(true);
     if(!CHANGELOG.length) $("logPanel").hidden=true; else draw(false);
   })();
+
+  // ---------- 업데이트 말풍선 (새 소식이 있을 때 한 번) ----------
+  function showUpdateBubble(){
+    if(!CHANGELOG.length || !$("installBanner").hidden) return;      // 홈 화면 안내가 떠 있으면 그 다음에
+    const latest=CHANGELOG[0];
+    if(lsGet("first-words-logSeen")===latest.date) return;
+    $("updateText").textContent = fmtShort(latest.date)+" "+latest.text;
+    $("updateBubble").hidden=false;
+  }
+  function closeUpdate(){ $("updateBubble").hidden=true; if(CHANGELOG.length) lsSet("first-words-logSeen", CHANGELOG[0].date); }
+  $("updateClose").onclick=closeUpdate;
+  $("updateMore").onclick=()=>{ closeUpdate(); openSettings("logPanel"); };
+  showUpdateBubble();
 
   // ---------- feedback ----------
   // 의견은 구글 설문지로 제출 → 응답 시트에 쌓이고 메일 알림
