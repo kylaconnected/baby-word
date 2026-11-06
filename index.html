@@ -206,6 +206,16 @@ header{position:relative;padding-right:44px}
 .setwrap{max-width:600px;margin:0 auto;padding-block:12px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
 .sethead{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);padding:6px 0;z-index:1}
 .setrow{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:var(--field);border-radius:12px;padding:12px 14px;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+.setmenu{padding:6px 0;gap:0}
+.menurow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;background:none;padding:13px 18px;font:inherit;color:var(--ink);cursor:pointer;text-align:left;border-top:1px solid var(--line)}
+.menurow:first-child{border-top:0}
+.menurow:hover{background:var(--field)}
+.menurow span{display:flex;flex-direction:column;gap:1px;min-width:0}
+.menurow b{font-weight:400;font-size:1rem}
+.menurow small{font-size:.8rem;color:var(--muted)}
+.setpage{display:flex;flex-direction:column;gap:14px}
+.sethead #setTitle{flex:1;margin:0}
+.sethead{gap:4px}
 .go-arrow{font-style:normal;color:var(--muted);font-size:1.3rem;line-height:1}
 .settings .os{display:inline-block;font-size:.72rem;color:var(--btn);background:var(--btn-soft);border-radius:999px;padding:0 7px;margin-right:4px;line-height:1.6}
 .settings .ic{width:15px;height:15px;vertical-align:-3px;fill:none;stroke:var(--btn);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -335,24 +345,31 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
 <div class="settings" id="settings" hidden role="dialog" aria-modal="true" aria-labelledby="setTitle">
   <div class="setwrap">
     <div class="sethead">
+      <button type="button" class="iconbtn" id="setBack" aria-label="설정 메뉴로" hidden><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
       <h2 id="setTitle">설정</h2>
       <button type="button" class="iconbtn" id="setClose" aria-label="설정 닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
 
+    <nav class="panel setmenu" id="setMenu" aria-label="설정 메뉴">
+      <button type="button" class="menurow" data-go="home"><span><b>홈 화면에 추가</b><small>앱처럼 쓰는 방법</small></span><i class="go-arrow" aria-hidden="true">›</i></button>
+      <button type="button" class="menurow" id="editChild"><span><b>아기 정보 설정</b><small id="childInfo">이름·생일 설정</small></span><i class="go-arrow" aria-hidden="true">›</i></button>
+      <button type="button" class="menurow" data-go="backup"><span><b>백업</b><small id="bkSub">기록을 파일로 보관하고 옮기기</small></span><i class="go-arrow" aria-hidden="true">›</i></button>
+      <button type="button" class="menurow" data-go="feedback" id="fbMenu" hidden><span><b>의견 보내기</b><small>불편한 점, 원하는 기능</small></span><i class="go-arrow" aria-hidden="true">›</i></button>
+      <button type="button" class="menurow" data-go="updates"><span><b>업데이트 소식</b><small id="logSub">반영된 내용</small></span><i class="go-arrow" aria-hidden="true">›</i></button>
+      <button type="button" class="menurow" data-go="about"><span><b>서비스 안내</b><small>발달 평가 안내, 저장 방식</small></span><i class="go-arrow" aria-hidden="true">›</i></button>
+    </nav>
+
+    <section class="setpage" data-page="home" data-title="홈 화면에 추가" hidden>
+
     <div class="panel">
-      <h3>홈 화면에 추가</h3>
       <p class="small muted" style="margin:0">홈 화면에 추가하면 앱처럼 쓸 수 있고, 오래 안 열어도 기록이 자동으로 지워지지 않아요.</p>
       <p class="small" style="margin:0"><span class="os">아이폰</span> 사파리 아래쪽 공유 버튼 <svg class="ic" viewBox="0 0 24 24" aria-label="공유"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg> → <b class="em">‘홈 화면에 추가’</b></p>
       <p class="small" style="margin:0"><span class="os">안드로이드</span> 크롬 오른쪽 위 메뉴(⋮) → <b class="em">‘홈 화면에 추가’</b> · 삼성 인터넷은 아래쪽 메뉴(≡) → ‘현재 페이지 추가’</p>
     </div>
+    </section>
 
+    <section class="setpage" data-page="backup" data-title="백업" hidden>
     <div class="panel">
-      <h3>아기 정보</h3>
-      <button type="button" class="setrow" id="editChild"><span id="childInfo">이름·생일 설정</span><i class="go-arrow" aria-hidden="true">›</i></button>
-    </div>
-
-    <div class="panel">
-      <h3>백업</h3>
       <p class="small muted" style="margin:0">기록과 녹음은 이 기기의 브라우저에만 저장돼요. 브라우저 데이터를 지우거나 휴대폰을 바꾸면 사라지니, 2주에 한 번쯤 백업 파일을 받아 ‘파일’ 앱이나 클라우드 드라이브에 보관하세요. 다른 기기로 옮길 때도 이 파일을 불러오면 됩니다.</p>
       <p class="small num" style="margin:0" id="lastBackup"></p>
       <label class="check"><input type="checkbox" id="bkAudio" checked> 녹음도 함께 백업 <span class="muted small num" id="bkSize"></span></label>
@@ -361,10 +378,11 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
         <label class="ghost" style="flex-direction:row;cursor:pointer;color:var(--ink);font-size:inherit">백업 불러오기<input type="file" id="importFile" accept="application/json,.json" hidden></label>
       </div>
     </div>
+    </section>
 
+    <section class="setpage" data-page="feedback" data-title="의견 보내기" hidden>
 
     <div class="panel" id="fbPanel" hidden>
-      <h3>의견 보내기</h3>
       <p class="small muted" style="margin:0">불편한 점, 있었으면 하는 기능을 편하게 남겨주세요. <b style="font-weight:400;color:var(--ink)">보내기를 누른 의견만 전송되고, 아기 기록과 녹음은 보내지 않아요.</b></p>
       <form id="fbForm" autocomplete="off" style="display:flex;flex-direction:column;gap:10px">
         <textarea id="fbText" rows="4" maxlength="1000" placeholder="예: 분류에 ‘놀이’가 있었으면 좋겠어요" aria-label="의견"></textarea>
@@ -375,19 +393,22 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
         </div>
       </form>
     </div>
+    </section>
 
+    <section class="setpage" data-page="updates" data-title="업데이트 소식" hidden>
     <div class="panel" id="logPanel">
-      <h3>업데이트 소식</h3>
       <p class="small muted" style="margin:0">보내주신 의견 중 반영된 내용을 여기에 알려드려요.</p>
       <ul class="changelog" id="changelog"></ul>
       <button type="button" class="linkbtn" id="logMore" hidden>이전 소식 더 보기</button>
     </div>
+    </section>
 
+    <section class="setpage" data-page="about" data-title="서비스 안내" hidden>
     <div class="panel">
-      <h3>서비스 안내</h3>
       <p class="small muted" style="margin:0">본 서비스는 보호자의 기록을 돕기 위한 도구로, 아동의 언어 발달을 평가하거나 진단하지 않습니다. 언어 발달에 대한 전문적인 상담은 영유아 건강검진, 소아청소년과 전문의 또는 언어재활사를 통해 받으시기를 권장드립니다.</p>
       <p class="small muted" style="margin:0">기록과 녹음은 이 기기에만 저장되고, 서버나 다른 곳으로 전송되지 않아요.</p>
     </div>
+    </section>
   </div>
 </div>
 
@@ -568,7 +589,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     $("childName").textContent = child.name ? child.name+"의 말 수첩" : "우리 아기 말 수첩";
     $("childAge").textContent = ageText(child.birth);
     $("childLink").textContent = child.name ? "아기 정보 수정" : "아기 이름·생일 설정";
-    $("childInfo").textContent = child.name ? child.name+(child.birth?" · "+fmt(child.birth)+" 생":"") : "이름·생일 설정";
+    $("childInfo").textContent = child.name ? child.name+(child.birth?" · "+fmt(child.birth)+" 생":"") : "이름·생일을 넣어주세요";
 
     const shown = words
       .filter(w => filter==="all" || (filter==="say" ? !!w.say : (!w.say && !!w.und)))
@@ -617,6 +638,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   function renderBanners(){
     const lb=lsGet("first-words-lastBackup");
     const days = lb ? Math.floor((new Date(today())-new Date(lb))/86400000) : null;
+    $("bkSub").textContent = lb ? "마지막 백업 "+fmt(lb) : "아직 백업한 적이 없어요";
     $("lastBackup").textContent = lb ? "마지막 백업: "+fmt(lb)+(days>0?" ("+days+"일 전)":" (오늘)") : "아직 백업한 적이 없어요.";
     const need = words.length>=5 && (days===null || days>=14);
     $("backupBanner").hidden=!need;
@@ -877,12 +899,19 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(!$("childSheet").hidden){ $("childSheet").hidden=true; return; } if(!$("sheet").hidden){ closeEdit(); return; } closeSettings(); } });
 
   // ---------- 설정 ----------
-  function openSettings(scrollTo){
-    $("settings").hidden=false; document.body.classList.add("noscroll");
+  function setPage(k){
+    document.querySelectorAll(".setpage").forEach(el=>el.hidden = el.dataset.page!==k);
+    $("setMenu").hidden = !!k; $("setBack").hidden = !k;
+    const pg = k && document.querySelector('.setpage[data-page="'+k+'"]');
+    $("setTitle").textContent = pg ? pg.dataset.title : "설정";
     $("settings").scrollTop=0;
-    if(scrollTo) setTimeout(()=>$(scrollTo).scrollIntoView({behavior:"smooth",block:"center"}),60);
-    else $("setClose").focus();
   }
+  function openSettings(page){
+    $("settings").hidden=false; document.body.classList.add("noscroll");
+    setPage(page||""); (page?$("setBack"):$("setClose")).focus();
+  }
+  document.querySelectorAll(".menurow[data-go]").forEach(b=>b.onclick=()=>setPage(b.dataset.go));
+  $("setBack").onclick=()=>setPage("");
   function closeSettings(){ if($("settings").hidden) return; $("settings").hidden=true; document.body.classList.remove("noscroll"); $("openSettings").focus(); }
   $("openSettings").onclick=()=>openSettings();
   $("setClose").onclick=closeSettings;
@@ -907,7 +936,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     });
     $("installClose").onclick=()=>{ $("installBanner").hidden=true; lsSet("first-words-installHint2","off"); showUpdateBubble(); };
   })();
-  $("backupGo").onclick=()=>openSettings("backupActions");
+  $("backupGo").onclick=()=>openSettings("backup");
 
   // ---------- 업데이트 소식 (반영된 내용만, 최신이 위) ----------
   // fromFeedback: true 이면 '의견 반영' 표시
@@ -920,6 +949,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
     const draw=all=>{ ul.innerHTML=(all?CHANGELOG:CHANGELOG.slice(0,SHOW)).map(row).join(""); more.hidden = all || CHANGELOG.length<=SHOW; };
     more.onclick=()=>draw(true);
     if(!CHANGELOG.length) $("logPanel").hidden=true; else draw(false);
+    $("logSub").textContent = CHANGELOG.length ? "최근 소식 "+fmtShort(CHANGELOG[0].date) : "아직 없어요";
   })();
 
   // ---------- 업데이트 말풍선 (새 소식이 있을 때 한 번) ----------
@@ -932,7 +962,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   }
   function closeUpdate(){ $("updateBubble").hidden=true; if(CHANGELOG.length) lsSet("first-words-logSeen", CHANGELOG[0].date); }
   $("updateClose").onclick=closeUpdate;
-  $("updateMore").onclick=()=>{ closeUpdate(); openSettings("logPanel"); };
+  $("updateMore").onclick=()=>{ closeUpdate(); openSettings("updates"); };
   showUpdateBubble();
 
   // ---------- feedback ----------
@@ -940,7 +970,7 @@ pre.copy{max-height:200px;overflow-y:auto;white-space:pre-wrap;background:var(--
   const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfBCVUGQrfiQltzDM1fv--9fAkyfPLElN6G-sj7St7d7Fh9eg/formResponse";
   const FB_FIELDS = {message:"entry.552461988", device:"entry.616103129", app:"entry.320944670"};
   if(FEEDBACK_URL){
-    $("fbPanel").hidden=false;
+    $("fbPanel").hidden=false; $("fbMenu").hidden=false;
     $("fbText").addEventListener("input",()=>{ $("fbCount").textContent=$("fbText").value.length+" / 1000"; });
     $("fbForm").addEventListener("submit", async e=>{
       e.preventDefault();
